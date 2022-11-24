@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Options</title>
+
+    <link
+      rel="shortcut icon"
+      type="image/jpg"
+      href="../../assets/icons/128x128.png"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      .container,
+      .selected_bundles,
+      .save_options {
+        margin-top: 20px;
+      }
+
+      .is-invalid::placeholder {
+        color: #dc3545;
+      }
+
+      tr td:last-of-type {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #savedOptionsToast {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row"><h1>Options Page</h1></div>
+      <div
+        id="savedOptionsToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <span class="badge me-auto"></span>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="toast-body"></div>
+      </div>
+
+      <form class="row gy-3">
+        <div class="col-sm-12 col-md-6">
+          <label for="bundleName" class="form-label">Bundle Name</label>
+          <input
+            required
+            type="text"
+            class="form-control"
+            id="bundleName"
+            placeholder="i.e. Async Bundle"
+          />
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <label for="urlParamValue" class="form-label">Url param value</label>
+          <input
+            required
+            type="text"
+            class="form-control"
+            id="urlParamValue"
+            placeholder="i.e. feabv"
+          />
+        </div>
+        <div class="col-2">
+          <button
+            id="addBundle"
+            style="width: 100%"
+            type="submit"
+            class="btn btn-outline-primary"
+          >
+            Add Bundle
+          </button>
+        </div>
+      </form>
+
+      <div class="row selected_bundles">
+        <div id="selected_bundles">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Bundle Name</th>
+                <th scope="col">URL param value</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="row save_options">
+          <div class="col-2">
+            <button
+              id="saveOptions"
+              style="width: 100%"
+              type="submit"
+              class="btn btn-primary"
+              disabled
+            >
+              Save Options
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../../libs/bootstrap.min.js"></script>
+    <script type="module" src="./index.js"></script>
+  </body>
+</html>
