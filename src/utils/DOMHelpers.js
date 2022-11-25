@@ -39,6 +39,35 @@ export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
   });
 }
 
+function listItemBuilder({ id, bundleName, urlParamValue }) {
+  return `
+  <li class="list-group-item">
+    <input class="form-check-input me-1" type="checkbox" value="${urlParamValue}" id="${id}">
+    <label class="form-check-label" for="${id}">${bundleName}</label>
+    <input type="text" class="form-control" data-id="${id}" placeholder="${urlParamValue} value" />
+  </li>
+`;
+}
+
+/**
+ * @param {import('../types/index.js').ExtensionOptions[]} optionsToBuild
+ * @param {HTMLElement} target
+ */
+export function popupOptionsBuilder(optionsToBuild, target) {
+  const groupedList = document.createElement('ul');
+  let groupedListContent = '';
+
+  groupedList.classList.add('list-group');
+
+  for (const { id, bundleName, urlParamValue } of optionsToBuild) {
+    groupedListContent += listItemBuilder({ id, bundleName, urlParamValue });
+  }
+
+  groupedList.innerHTML = groupedListContent;
+
+  target.appendChild(groupedList);
+}
+
 /**
  * @param {import('../types/index.js').Toast} params
  */
