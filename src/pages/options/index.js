@@ -11,26 +11,6 @@ import { extensionApi, actions, logger } from '../../utils/api.js';
 const globalOptions = [];
 const { sendMessage } = extensionApi;
 
-let toast, headerToast, bodyToast;
-
-(function toastElemInit() {
-  const toastElement = document.getElementById('optionsPageToast');
-  if (toastElement) {
-    toast = new bootstrap.Toast(toastElement, {
-      animation: true,
-      autohide: true,
-      delay: 3000,
-    });
-
-    headerToast = toastElement.querySelector('.toast-header .badge');
-    bodyToast = toastElement.querySelector('.toast-body');
-
-    toastElement.addEventListener('hide.bs.toast', () => {
-      document.getElementById('saveOptions').setAttribute('disabled', 'true');
-    });
-  }
-})();
-
 function addBundleToOptions(e) {
   e.preventDefault();
 
@@ -75,22 +55,13 @@ async function saveOptions() {
     await sendMessage({ type: actions.SET_OPTIONS, payload: globalOptions });
 
     setToastContent({
-      toast,
       toastType: 'success',
-      bodyToast,
-      headerToast,
       bodyToastText: 'Options Saved Successfully',
     });
   } catch (error) {
     logger('error', 'setOptions', String(error));
 
-    setToastContent({
-      toast,
-      toastType: 'danger',
-      bodyToast,
-      headerToast,
-      bodyToastText: error.message,
-    });
+    setToastContent({ toastType: 'danger', bodyToastText: error.message });
   }
 }
 
@@ -106,30 +77,43 @@ async function restoreOptions() {
       optionsToTableDefinitionBuilder(globalOptions, tbody);
 
       setToastContent({
-        toast,
         toastType: 'success',
-        bodyToast,
-        headerToast,
         bodyToastText: 'Options Restored Successfully',
       });
     }
   } catch (error) {
     logger('error', 'getOptions', String(error));
 
-    setToastContent({
-      toast,
-      toastType: 'danger',
-      bodyToast,
-      headerToast,
-      bodyToastText: error.message,
-    });
+    setToastContent({ toastType: 'danger', bodyToastText: error.message });
   }
 }
+
+async function removeAll() {
+  try {
+    await sendMessage({
+      type: actions.REMOVE_ALL,
+      payload: 'QueryParamsBuilderOptions',
+    });
+
+    document.querySelector('.selected_bundles tbody').textContent = '';
+
+    setToastContent({
+      toastType: 'success',
+      bodyToastText: 'All Options Removed Successfully',
+    });
+  } catch (error) {
+    logger('error', 'getOptions', String(error));
+
+    setToastContent({ toastType: 'danger', bodyToastText: error.message });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.getElementById('saveOptions').addEventListener('click', saveOptions);
 document
   .getElementById('addBundle')
   .addEventListener('click', addBundleToOptions);
+document.getElementById('removeAll').addEventListener('click', removeAll);
 
 // chrome.storage.sync.remove('QueryParamsBuilder');
 

@@ -8,9 +8,6 @@
 /**
  * @typedef {Object} Toast
  * @property {"success" | "danger"} toastType
- * @property {bootstrap.Toast} toast
- * @property {HTMLElement} headerToast
- * @property {HTMLElement} bodyToast
  * @property {string} bodyToastText
  */
 

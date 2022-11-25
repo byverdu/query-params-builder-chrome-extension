@@ -1,7 +1,13 @@
 import { extensionApi, actions } from '../utils/api.js';
 
-const { onMessage, getStorage, setStorage, getCurrentTab, updateUrlTab } =
-  extensionApi;
+const {
+  onMessage,
+  getStorage,
+  setStorage,
+  getCurrentTab,
+  updateUrlTab,
+  removeStorage,
+} = extensionApi;
 
 async function getStorageAsync(sendResponse, key) {
   const items = await getStorage(key);
@@ -23,6 +29,12 @@ async function updateUrlTabAsync(sendResponse, url) {
   const tab = await updateUrlTab(url);
 
   sendResponse(tab);
+}
+
+async function removeStorageAsync(sendResponse, key) {
+  await removeStorage(key);
+
+  sendResponse(true);
 }
 
 onMessage((msg, sender, sendResponse) => {
@@ -48,6 +60,10 @@ onMessage((msg, sender, sendResponse) => {
       updateUrlTabAsync(sendResponse, msg.payload);
 
       return true;
+    }
+
+    if (msg.type === actions.REMOVE_ALL) {
+      removeStorageAsync(sendResponse, msg.payload);
     }
   }
 });

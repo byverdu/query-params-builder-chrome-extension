@@ -71,17 +71,30 @@ export function popupOptionsBuilder(optionsToBuild, target) {
 /**
  * @param {import('../types/index.js').Toast} params
  */
-export function setToastContent({
-  toast,
-  headerToast,
-  bodyToast,
-  toastType,
-  bodyToastText,
-}) {
+export function setToastContent({ toastType, bodyToastText }) {
+  let toast, headerToast, bodyToast;
+
   const optionsPageToastText = {
     success: 'Success!',
     danger: 'Error!',
   };
+
+  const toastElement = document.getElementById('optionsPageToast');
+  if (toastElement) {
+    toast = new bootstrap.Toast(toastElement, {
+      animation: true,
+      autohide: true,
+      delay: 3000,
+    });
+
+    headerToast = toastElement.querySelector('.toast-header .badge');
+    bodyToast = toastElement.querySelector('.toast-body');
+
+    toastElement.addEventListener('hide.bs.toast', () => {
+      document.getElementById('saveOptions').setAttribute('disabled', 'true');
+    });
+  }
+
   if (toast && headerToast && bodyToast) {
     headerToast.textContent = optionsPageToastText[toastType];
     bodyToast.textContent = bodyToastText;
