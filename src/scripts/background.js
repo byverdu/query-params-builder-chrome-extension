@@ -8,9 +8,7 @@ onMessage((msg, sender, sendResponse) => {
     if (msg.type === actions.SET_OPTIONS) {
       setStorage('QueryParamsBuilder', msg.payload)
         .then(() => console.log('QueryParamsBuilder extension saved'))
-        .catch(error =>
-          console.error('QueryParamsBuilder extension saved error', error)
-        );
+        .catch(error => error);
     }
 
     if (msg.type === actions.GET_OPTIONS) {
@@ -18,9 +16,7 @@ onMessage((msg, sender, sendResponse) => {
         .then(items => {
           sendResponse(items['QueryParamsBuilder']);
         })
-        .catch(error =>
-          console.error('mol-fe-params extension get options error', error)
-        );
+        .catch(error => error);
 
       return true;
     }

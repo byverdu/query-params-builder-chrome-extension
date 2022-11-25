@@ -3,7 +3,7 @@ import {
   randomId,
   setToastContent,
 } from '../../utils/DOMHelpers.js';
-import { extensionApi, actions } from '../../utils/api.js';
+import { extensionApi, actions, logger } from '../../utils/api.js';
 
 /**
  * @type {import('../../types/index.js').ExtensionOptions[]}
@@ -76,7 +76,7 @@ function saveOptions() {
       });
     })
     .catch(e => {
-      console.error(e);
+      logger('error', 'setOptions', String(e));
 
       setToastContent({
         toast,
@@ -101,7 +101,7 @@ function restoreOptions() {
       }
     })
     .catch(e => {
-      console.error(e);
+      logger('error', 'getOptions', String(e));
     });
 }
 document.addEventListener('DOMContentLoaded', restoreOptions);
