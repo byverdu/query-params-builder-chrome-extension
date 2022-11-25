@@ -13,6 +13,18 @@ async function setStorageAsync(key, values) {
   await setStorage(key, values);
 }
 
+async function getCurrentTabAsync(sendResponse) {
+  const [tab] = await getCurrentTab();
+
+  sendResponse(tab);
+}
+
+async function updateUrlTabAsync(sendResponse, url) {
+  const tab = await updateUrlTab(url);
+
+  sendResponse(tab);
+}
+
 onMessage((msg, sender, sendResponse) => {
   console.log(sender);
   if (msg && msg.type) {
@@ -27,19 +39,13 @@ onMessage((msg, sender, sendResponse) => {
     }
 
     if (msg.type === actions.GET_CURRENT_TAB) {
-      getCurrentTab()
-        .then(([tab]) => {
-          sendResponse(tab);
-        })
-        .catch(error => error);
+      getCurrentTabAsync(sendResponse);
 
       return true;
     }
 
     if (msg.type === actions.UPDATE_URL_TAB) {
-      updateUrlTab(msg.payload)
-        .then(tab => tab)
-        .catch(error => error);
+      updateUrlTabAsync(sendResponse, msg.payload);
 
       return true;
     }
