@@ -1,23 +1,27 @@
-import { extensionApi, actions, logger } from '../utils/api.js';
+import { extensionApi, actions } from '../utils/api.js';
 
 const { onMessage, getStorage, setStorage, getCurrentTab, updateUrlTab } =
   extensionApi;
 
-onMessage(async (msg, sender, sendResponse) => {
+async function getStorageAsync(sendResponse, key) {
+  const items = await getStorage(key);
+
+  sendResponse(items[key]);
+}
+
+async function setStorageAsync(key, values) {
+  await setStorage(key, values);
+}
+
+onMessage((msg, sender, sendResponse) => {
   console.log(sender);
   if (msg && msg.type) {
     if (msg.type === actions.SET_OPTIONS) {
-      setStorage('QueryParamsBuilderOptions', msg.payload)
-        .then(() => logger('log', 'setOptions', 'OK!'))
-        .catch(error => error);
+      setStorageAsync('QueryParamsBuilderOptions', msg.payload);
     }
 
     if (msg.type === actions.GET_OPTIONS) {
-      getStorage('QueryParamsBuilderOptions')
-        .then(items => {
-          sendResponse(items['QueryParamsBuilderOptions']);
-        })
-        .catch(error => error);
+      getStorageAsync(sendResponse, 'QueryParamsBuilderOptions');
 
       return true;
     }

@@ -32,7 +32,7 @@ export const extensionApi = {
       payload,
     }),
 
-  onMessage: async callback => chrome.runtime.onMessage.addListener(callback),
+  onMessage: callback => chrome.runtime.onMessage.addListener(callback),
   getCurrentTab: async () => await chrome.tabs.query({ active: true }),
   updateUrlTab: async url => await chrome.tabs.update({ url }),
 };

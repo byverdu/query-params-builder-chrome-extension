@@ -30,7 +30,7 @@ export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
   document.querySelectorAll('.delete-bundle').forEach(btn => {
     btn.addEventListener('click', event => {
       const id = event.currentTarget.dataset.bundleId;
-      const idToRemove = optionsToBuild.findIndex(item => item.id !== id);
+      const idToRemove = optionsToBuild.findIndex(item => item.id === id);
       optionsToBuild.splice(idToRemove, 1);
       document.getElementById(id).remove();
 
@@ -72,35 +72,23 @@ export function popupOptionsBuilder(optionsToBuild, target) {
  * @param {import('../types/index.js').Toast} params
  */
 export function setToastContent({
-  toastElement,
   toast,
   headerToast,
   bodyToast,
   toastType,
   bodyToastText,
 }) {
-  const savedOptionsToastText = {
-    success: {
-      header: 'Success!',
-      body: 'Options Saved Successfully',
-    },
-    danger: {
-      header: 'Error!',
-    },
+  const optionsPageToastText = {
+    success: 'Success!',
+    danger: 'Error!',
   };
-  if (toastElement && toast && headerToast && bodyToast) {
-    headerToast.textContent = savedOptionsToastText[toastType].header;
-    bodyToast.textContent = bodyToastText
-      ? bodyToastText
-      : savedOptionsToastText[toastType].body;
+  if (toast && headerToast && bodyToast) {
+    headerToast.textContent = optionsPageToastText[toastType];
+    bodyToast.textContent = bodyToastText;
 
     headerToast.className += ` text-bg-${toastType}`;
 
     toast.show();
-
-    toastElement.addEventListener('hide.bs.toast', () => {
-      document.getElementById('saveOptions').setAttribute('disabled', 'true');
-    });
   }
 }
 
