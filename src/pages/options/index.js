@@ -67,12 +67,12 @@ async function saveOptions() {
 
 async function restoreOptions() {
   try {
-    const resp = await sendMessage({ type: actions.GET_OPTIONS });
+    const options = await sendMessage({ type: actions.GET_OPTIONS });
 
-    if (resp && Array.isArray(resp)) {
+    if (options && Array.isArray(options)) {
       const tbody = document.querySelector('.selected_bundles tbody');
 
-      globalOptions.push(...resp);
+      globalOptions.push(...options);
 
       optionsToTableDefinitionBuilder(globalOptions, tbody);
 
