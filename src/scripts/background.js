@@ -31,21 +31,18 @@ async function updateUrlTabAsync(sendResponse, url) {
   sendResponse(tab);
 }
 
-async function removeStorageAsync(sendResponse, key) {
+async function removeStorageAsync(key) {
   await removeStorage(key);
-
-  sendResponse(true);
 }
 
 onMessage((msg, sender, sendResponse) => {
-  console.log(sender);
-  if (msg && msg.type) {
+  if (sender && msg && msg.type) {
     if (msg.type === actions.SET_OPTIONS) {
-      setStorageAsync('QueryParamsBuilderOptions', msg.payload);
+      setStorageAsync(msg.payload.key, msg.payload.value);
     }
 
     if (msg.type === actions.GET_OPTIONS) {
-      getStorageAsync(sendResponse, 'QueryParamsBuilderOptions');
+      getStorageAsync(sendResponse, msg.payload);
 
       return true;
     }
@@ -63,7 +60,7 @@ onMessage((msg, sender, sendResponse) => {
     }
 
     if (msg.type === actions.REMOVE_ALL) {
-      removeStorageAsync(sendResponse, msg.payload);
+      removeStorageAsync(msg.payload);
     }
   }
 });
