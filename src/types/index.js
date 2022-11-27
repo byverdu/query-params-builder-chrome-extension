@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} ExtensionOptions
  * @property {string} bundleName
- * @property {string} urlParamValue
+ * @property {string} urlParamKey
  * @property {string} id
  */
 

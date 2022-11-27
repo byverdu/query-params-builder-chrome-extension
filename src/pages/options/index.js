@@ -16,10 +16,10 @@ function addBundleToOptions(e) {
 
   const errorMsg = 'This value can not be empty';
   const bundleName = document.getElementById('bundleName');
-  const urlParamValue = document.getElementById('urlParamValue');
+  const urlParamKey = document.getElementById('urlParamKey');
   const tbody = document.querySelector('.selected_bundles tbody');
   const isValidName = bundleName.validity.valid;
-  const isValidParam = urlParamValue.validity.valid;
+  const isValidParam = urlParamKey.validity.valid;
 
   if (!isValidName) {
     bundleName.classList.add('is-invalid');
@@ -27,24 +27,24 @@ function addBundleToOptions(e) {
   }
 
   if (!isValidParam) {
-    urlParamValue.classList.add('is-invalid');
-    urlParamValue.placeholder = errorMsg;
+    urlParamKey.classList.add('is-invalid');
+    urlParamKey.placeholder = errorMsg;
   }
 
   if (isValidName && isValidParam) {
-    urlParamValue.classList.remove('is-invalid');
+    urlParamKey.classList.remove('is-invalid');
     bundleName.classList.remove('is-invalid');
     tbody.textContent = '';
 
     globalOptions.push({
       bundleName: bundleName.value,
-      urlParamValue: urlParamValue.value,
+      urlParamKey: urlParamKey.value,
       id: randomId(),
     });
 
     optionsToTableDefinitionBuilder(globalOptions, tbody);
     bundleName.value = '';
-    urlParamValue.value = '';
+    urlParamKey.value = '';
 
     document.getElementById('saveOptions').removeAttribute('disabled');
   }
@@ -52,7 +52,10 @@ function addBundleToOptions(e) {
 
 async function saveOptions() {
   try {
-    await sendMessage({ type: actions.SET_OPTIONS, payload: globalOptions });
+    await sendMessage({
+      type: actions.SET_OPTIONS,
+      payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
+    });
 
     setToastContent({
       toastType: 'success',
@@ -67,7 +70,10 @@ async function saveOptions() {
 
 async function restoreOptions() {
   try {
-    const options = await sendMessage({ type: actions.GET_OPTIONS });
+    const options = await sendMessage({
+      type: actions.GET_OPTIONS,
+      payload: 'QueryParamsBuilderOptions',
+    });
 
     if (options && Array.isArray(options)) {
       const tbody = document.querySelector('.selected_bundles tbody');

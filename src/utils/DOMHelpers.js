@@ -1,8 +1,8 @@
-function tableRowBuilder(id, bundleName, urlParamValue) {
+function tableRowBuilder(id, bundleName, urlParamKey) {
   return `
   <tr id="${id}">
   <td>${bundleName}</td>
-  <td>${urlParamValue}</td>
+  <td>${urlParamKey}</td>
   <td>
     <button data-bundle-id="${id}" class="btn btn-outline-danger delete-bundle">
       Delete
@@ -21,7 +21,7 @@ export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
     const tr = tableRowBuilder(
       option.id,
       option.bundleName,
-      option.urlParamValue
+      option.urlParamKey
     );
 
     tbody.innerHTML += tr;
@@ -39,12 +39,12 @@ export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
   });
 }
 
-function listItemBuilder({ id, bundleName, urlParamValue }) {
+function listItemBuilder({ id, bundleName, urlParamKey }) {
   return `
   <li class="list-group-item">
-    <input class="form-check-input me-1" type="checkbox" value="${urlParamValue}" id="${id}">
+    <input class="form-check-input me-1" type="checkbox" value="${urlParamKey}" id="${id}">
     <label class="form-check-label" for="${id}">${bundleName}</label>
-    <input type="text" class="form-control" data-id="${id}" placeholder="${urlParamValue} value" />
+    <input type="text" class="form-control" data-id="${id}" placeholder="${urlParamKey} value" />
   </li>
 `;
 }
@@ -59,8 +59,8 @@ export function popupOptionsBuilder(optionsToBuild, target) {
 
   groupedList.classList.add('list-group');
 
-  for (const { id, bundleName, urlParamValue } of optionsToBuild) {
-    groupedListContent += listItemBuilder({ id, bundleName, urlParamValue });
+  for (const { id, bundleName, urlParamKey } of optionsToBuild) {
+    groupedListContent += listItemBuilder({ id, bundleName, urlParamKey });
   }
 
   groupedList.innerHTML = groupedListContent;
