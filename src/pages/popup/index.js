@@ -19,7 +19,6 @@ async function applyParamsToUrl() {
       const checkboxes = Array.from(
         document.querySelectorAll('input[type="checkbox"]')
       );
-      // const checkedInputs = checkboxes.filter(input => input.checked);
 
       for (const input of checkboxes) {
         // delete all to update only with checked ones
@@ -79,35 +78,33 @@ async function restoreOptions() {
       type: actions.GET_STORAGE,
       payload: 'QueryParamsBuilderTab',
     });
+    const options = await sendMessage({
+      type: actions.GET_STORAGE,
+      payload: 'QueryParamsBuilderOptions',
+    });
+    const result = [];
 
     if (
       savedTabInfo &&
       savedTabInfo[currentTab.id] &&
       Array.isArray(savedTabInfo[currentTab.id])
     ) {
-      console.table('savedTabInfo', savedTabInfo);
+      result.push(...savedTabInfo[currentTab.id]);
 
-      popupOptionsBuilder(
-        savedTabInfo[currentTab.id],
-        document.getElementById('selected_bundles')
-      );
-    } else {
-      const options = await sendMessage({
-        type: actions.GET_STORAGE,
-        payload: 'QueryParamsBuilderOptions',
-      });
-      console.table('currentTab', currentTab);
-      console.table('options', options);
       if (options && Array.isArray(options)) {
-        options;
-        popupOptionsBuilder(
-          options,
-          document.getElementById('selected_bundles')
-        );
+        for (const option of options) {
+          if (!result.find(item => item.id === option.id)) {
+            result.push(option);
+          }
+        }
+      }
+    } else {
+      if (options && Array.isArray(options)) {
+        result.push(...options);
       }
     }
 
-    // savedOptions = options;
+    popupOptionsBuilder(result, document.getElementById('selected_bundles'));
   } catch (error) {
     console.error(`QueryParamsBuilder extension getOptions`, String(error));
   }

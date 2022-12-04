@@ -63,7 +63,7 @@ function listItemBuilder({
       class="form-control"
       data-id="${id}"
       placeholder="${urlParamKey} value"
-      value=${(urlParamValue && urlParamValue) || ''}
+      value="${(urlParamValue && urlParamValue) || ''}"
     />
   </li>
 `;
