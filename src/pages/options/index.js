@@ -54,7 +54,7 @@ function addBundleToOptions(e) {
 async function saveOptions() {
   try {
     await sendMessage({
-      type: actions.SET_OPTIONS,
+      type: actions.SET_STORAGE,
       payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
     });
 
@@ -72,7 +72,7 @@ async function saveOptions() {
 async function restoreOptions() {
   try {
     const options = await sendMessage({
-      type: actions.GET_OPTIONS,
+      type: actions.GET_STORAGE,
       payload: 'QueryParamsBuilderOptions',
     });
 
@@ -98,7 +98,7 @@ async function restoreOptions() {
 async function removeAll() {
   try {
     await sendMessage({
-      type: actions.REMOVE_ALL,
+      type: actions.REMOVE_ALL_STORAGE,
       payload: ['QueryParamsBuilderOptions', 'QueryParamsBuilderTab'],
     });
 

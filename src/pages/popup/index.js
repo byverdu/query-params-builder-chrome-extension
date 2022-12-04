@@ -57,7 +57,7 @@ async function applyParamsToUrl() {
       });
 
       await sendMessage({
-        type: actions.SET_OPTIONS,
+        type: actions.SET_STORAGE,
         payload: {
           key: 'QueryParamsBuilderTab',
           value: {
@@ -76,7 +76,7 @@ async function restoreOptions() {
   try {
     const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
     const savedTabInfo = await sendMessage({
-      type: actions.GET_OPTIONS,
+      type: actions.GET_STORAGE,
       payload: 'QueryParamsBuilderTab',
     });
 
@@ -93,7 +93,7 @@ async function restoreOptions() {
       );
     } else {
       const options = await sendMessage({
-        type: actions.GET_OPTIONS,
+        type: actions.GET_STORAGE,
         payload: 'QueryParamsBuilderOptions',
       });
       console.table('currentTab', currentTab);

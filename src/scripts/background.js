@@ -37,11 +37,11 @@ async function removeStorageAsync(key) {
 
 onMessage((msg, sender, sendResponse) => {
   if (sender && msg && msg.type) {
-    if (msg.type === actions.SET_OPTIONS) {
+    if (msg.type === actions.SET_STORAGE) {
       setStorageAsync(msg.payload.key, msg.payload.value);
     }
 
-    if (msg.type === actions.GET_OPTIONS) {
+    if (msg.type === actions.GET_STORAGE) {
       getStorageAsync(sendResponse, msg.payload);
 
       return true;
@@ -59,7 +59,7 @@ onMessage((msg, sender, sendResponse) => {
       return true;
     }
 
-    if (msg.type === actions.REMOVE_ALL) {
+    if (msg.type === actions.REMOVE_ALL_STORAGE) {
       removeStorageAsync(msg.payload);
     }
   }
