@@ -3,6 +3,8 @@
  * @property {string} bundleName
  * @property {string} urlParamKey
  * @property {string} id
+ * @property {string} urlParamValue
+ * @property {boolean} checked
  */
 
 /**
