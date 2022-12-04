@@ -39,12 +39,32 @@ export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
   });
 }
 
-function listItemBuilder({ id, bundleName, urlParamKey }) {
+function listItemBuilder({
+  id,
+  bundleName,
+  urlParamKey,
+  checked,
+  urlParamValue,
+}) {
   return `
   <li class="list-group-item">
-    <input class="form-check-input me-1" type="checkbox" value="${urlParamKey}" id="${id}">
+    <input
+      class="form-check-input me-1"
+      type="checkbox"
+      value="${urlParamKey}"
+      data-url-param-key="${urlParamKey}"
+      data-bundle-name="${bundleName}"
+      id="${id}"
+      ${checked && 'checked'}
+    >
     <label class="form-check-label" for="${id}">${bundleName}</label>
-    <input type="text" class="form-control" data-id="${id}" placeholder="${urlParamKey} value" />
+    <input
+      type="text"
+      class="form-control"
+      data-id="${id}"
+      placeholder="${urlParamKey} value"
+      value=${(urlParamValue && urlParamValue) || ''}
+    />
   </li>
 `;
 }
@@ -52,6 +72,7 @@ function listItemBuilder({ id, bundleName, urlParamKey }) {
 /**
  * @param {import('../types/index.js').ExtensionOptions[]} optionsToBuild
  * @param {HTMLElement} target
+ * @param {boolean} checked
  */
 export function popupOptionsBuilder(optionsToBuild, target) {
   const groupedList = document.createElement('ul');
@@ -59,8 +80,20 @@ export function popupOptionsBuilder(optionsToBuild, target) {
 
   groupedList.classList.add('list-group');
 
-  for (const { id, bundleName, urlParamKey } of optionsToBuild) {
-    groupedListContent += listItemBuilder({ id, bundleName, urlParamKey });
+  for (const {
+    id,
+    bundleName,
+    urlParamKey,
+    urlParamValue,
+    checked,
+  } of optionsToBuild) {
+    groupedListContent += listItemBuilder({
+      id,
+      bundleName,
+      urlParamKey,
+      checked,
+      urlParamValue,
+    });
   }
 
   groupedList.innerHTML = groupedListContent;

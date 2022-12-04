@@ -3,7 +3,7 @@ import {
   randomId,
   setToastContent,
 } from '../../utils/DOMHelpers.js';
-import { extensionApi, actions, logger } from '../../utils/api.js';
+import { extensionApi, actions } from '../../utils/api.js';
 
 /**
  * @type {import('../../types/index.js').ExtensionOptions[]}
@@ -40,6 +40,7 @@ function addBundleToOptions(e) {
       bundleName: bundleName.value,
       urlParamKey: urlParamKey.value,
       id: randomId(),
+      checked: false,
     });
 
     optionsToTableDefinitionBuilder(globalOptions, tbody);
@@ -62,7 +63,7 @@ async function saveOptions() {
       bodyToastText: 'Options Saved Successfully',
     });
   } catch (error) {
-    logger('error', 'setOptions', String(error));
+    console.error(`QueryParamsBuilder extension setOptions`, String(error));
 
     setToastContent({ toastType: 'danger', bodyToastText: error.message });
   }
@@ -88,7 +89,7 @@ async function restoreOptions() {
       });
     }
   } catch (error) {
-    logger('error', 'getOptions', String(error));
+    console.error(`QueryParamsBuilder extension getOptions`, String(error));
 
     setToastContent({ toastType: 'danger', bodyToastText: error.message });
   }
@@ -98,7 +99,7 @@ async function removeAll() {
   try {
     await sendMessage({
       type: actions.REMOVE_ALL,
-      payload: 'QueryParamsBuilderOptions',
+      payload: ['QueryParamsBuilderOptions', 'QueryParamsBuilderTab'],
     });
 
     document.querySelector('.selected_bundles tbody').textContent = '';
@@ -108,7 +109,7 @@ async function removeAll() {
       bodyToastText: 'All Options Removed Successfully',
     });
   } catch (error) {
-    logger('error', 'getOptions', String(error));
+    console.error(`QueryParamsBuilder extension removeAll`, String(error));
 
     setToastContent({ toastType: 'danger', bodyToastText: error.message });
   }

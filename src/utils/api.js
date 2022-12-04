@@ -12,16 +12,6 @@ export const actions = {
   REMOVE_ALL,
 };
 
-/**
- *
- * @param {"log" | "error" | "warn"} logType
- * @param {"getOptions" | "setOptions" | "updateTab" | "getTab"} msgType
- * @param {string} msg
- */
-export function logger(logType, msgType, msg) {
-  console[logType](`QueryParamsBuilder extension ${msgType} ${logType}`, msg);
-}
-
 export const extensionApi = {
   setStorage: async (key, value) =>
     await chrome.storage.sync.set({
@@ -35,7 +25,8 @@ export const extensionApi = {
     }),
 
   onMessage: callback => chrome.runtime.onMessage.addListener(callback),
-  getCurrentTab: async () => await chrome.tabs.query({ active: true }),
+  getCurrentTab: async () =>
+    await chrome.tabs.query({ active: true, currentWindow: true }),
   updateUrlTab: async url => await chrome.tabs.update({ url }),
   removeStorage: async key => await chrome.storage.sync.remove(key),
 };
