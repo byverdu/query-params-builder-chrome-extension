@@ -71,7 +71,6 @@ async function applyParamsToUrl() {
 }
 
 async function restoreOptions() {
-  console.log('restoreOptions');
   try {
     const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
     const savedTabInfo = await sendMessage({
@@ -105,6 +104,8 @@ async function restoreOptions() {
     }
 
     popupOptionsBuilder(result, document.getElementById('selected_bundles'));
+    document.getElementById('popup-spinner').style.display = 'none';
+    document.getElementById('content').style.visibility = 'visible';
   } catch (error) {
     console.error(`QueryParamsBuilder extension getOptions`, String(error));
   }

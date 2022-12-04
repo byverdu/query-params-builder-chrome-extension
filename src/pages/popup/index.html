@@ -21,6 +21,9 @@
         width: 400px;
         min-height: 300px;
       }
+      #content {
+        visibility: hidden;
+      }
       .selected_bundles {
         margin: 20px 0;
       }
@@ -35,13 +38,24 @@
         justify-content: space-between;
       }
 
+      #popup-spinner {
+        position: absolute;
+        left: 45%;
+        top: 40%;
+      }
+
       .form-control {
         width: 75%;
       }
     </style>
   </head>
   <body>
-    <div class="container">
+    <div class="container" id="popup-spinner">
+      <div>
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+    </div>
+    <div class="container" id="content">
       <div class="row"><h3>Params to apply</h3></div>
 
       <div class="row selected_bundles" id="selected_bundles"></div>
