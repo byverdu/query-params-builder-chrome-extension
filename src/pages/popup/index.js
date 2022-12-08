@@ -3,6 +3,47 @@ import { popupOptionsBuilder } from '../../utils/DOMHelpers.js';
 
 const { sendMessage } = extensionApi;
 
+async function restoreOptions() {
+  try {
+    const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
+    const savedTabInfo = await sendMessage({
+      type: actions.GET_STORAGE,
+      payload: 'QueryParamsBuilderTab',
+    });
+    const options = await sendMessage({
+      type: actions.GET_STORAGE,
+      payload: 'QueryParamsBuilderOptions',
+    });
+    const result = [];
+
+    if (
+      savedTabInfo &&
+      savedTabInfo[currentTab.id] &&
+      Array.isArray(savedTabInfo[currentTab.id])
+    ) {
+      result.push(...savedTabInfo[currentTab.id]);
+
+      if (options && Array.isArray(options)) {
+        for (const option of options) {
+          if (!result.find(item => item.id === option.id)) {
+            result.push(option);
+          }
+        }
+      }
+    } else {
+      if (options && Array.isArray(options)) {
+        result.push(...options);
+      }
+    }
+
+    popupOptionsBuilder(result, document.getElementById('selected_bundles'));
+    document.getElementById('popup-spinner').style.display = 'none';
+    document.getElementById('content').style.visibility = 'visible';
+  } catch (error) {
+    console.error(`QueryParamsBuilder extension getOptions`, String(error));
+  }
+}
+
 async function applyParamsToUrl() {
   try {
     const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
@@ -67,47 +108,6 @@ async function applyParamsToUrl() {
     }
   } catch (error) {
     console.error(`QueryParamsBuilder extension getTab`, String(error));
-  }
-}
-
-async function restoreOptions() {
-  try {
-    const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
-    const savedTabInfo = await sendMessage({
-      type: actions.GET_STORAGE,
-      payload: 'QueryParamsBuilderTab',
-    });
-    const options = await sendMessage({
-      type: actions.GET_STORAGE,
-      payload: 'QueryParamsBuilderOptions',
-    });
-    const result = [];
-
-    if (
-      savedTabInfo &&
-      savedTabInfo[currentTab.id] &&
-      Array.isArray(savedTabInfo[currentTab.id])
-    ) {
-      result.push(...savedTabInfo[currentTab.id]);
-
-      if (options && Array.isArray(options)) {
-        for (const option of options) {
-          if (!result.find(item => item.id === option.id)) {
-            result.push(option);
-          }
-        }
-      }
-    } else {
-      if (options && Array.isArray(options)) {
-        result.push(...options);
-      }
-    }
-
-    popupOptionsBuilder(result, document.getElementById('selected_bundles'));
-    document.getElementById('popup-spinner').style.display = 'none';
-    document.getElementById('content').style.visibility = 'visible';
-  } catch (error) {
-    console.error(`QueryParamsBuilder extension getOptions`, String(error));
   }
 }
 

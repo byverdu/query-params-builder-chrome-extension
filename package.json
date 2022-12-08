@@ -1,5 +1,5 @@
 {
-  "name": "set-url-params-chrome-extension",
+  "name": "query-params-builder-chrome-extension",
   "version": "1.0.0",
   "description": "Chrome extension where you can save key-value url params so you can speed up apps development",
   "main": "index.js",
