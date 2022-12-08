@@ -121,7 +121,3 @@ document
   .getElementById('addBundle')
   .addEventListener('click', addBundleToOptions);
 document.getElementById('removeAll').addEventListener('click', removeAll);
-
-// chrome.storage.sync.remove('QueryParamsBuilder');
-
-chrome.storage.sync.get(null).then(console.log);

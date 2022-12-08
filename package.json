@@ -1,19 +1,23 @@
 {
   "name": "set-url-params-chrome-extension",
   "version": "1.0.0",
-  "description": "",
+  "description": "Chrome extension where you can save key-value url params so you can speed up apps development",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "./build.sh"
   },
   "keywords": [],
-  "author": "",
+  "author": "@byverdu",
   "license": "ISC",
   "devDependencies": {
     "@types/bootstrap": "^5.2.6",
     "@types/chrome": "^0.0.203",
     "@types/eslint": "^8.4.10",
+    "@types/node": "^18.11.10",
     "eslint": "^8.28.0",
-    "prettier": "^2.8.0"
+    "html-minifier-terser": "^7.1.0",
+    "prettier": "^2.8.0",
+    "terser": "^5.16.1"
   }
 }
