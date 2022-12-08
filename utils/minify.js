@@ -18,7 +18,7 @@ const getFilesToMinify = function (dirPath, arrayOfFiles) {
   );
   let innerArray = arrayOfFiles || [];
 
-  files.forEach(function (file) {
+  for (const file of files) {
     const filePath = `${dirPath}/${file}`;
 
     if (fs.statSync(filePath).isDirectory()) {
@@ -28,7 +28,7 @@ const getFilesToMinify = function (dirPath, arrayOfFiles) {
         innerArray.push(filePath);
       }
     }
-  });
+  }
 
   return innerArray;
 };
@@ -40,9 +40,9 @@ const getFilesToMinify = function (dirPath, arrayOfFiles) {
     try {
       let minifiedContent;
       const fileContent = await readFile(file, { encoding: 'utf-8' });
-      const extensionName = path.extname(file);
+      const extname = path.extname(file);
 
-      if (extensionName === '.html') {
+      if (extname === '.html') {
         minifiedContent = await htmlMinifier(fileContent, {
           minifyCSS: true,
           collapseWhitespace: true,
@@ -52,7 +52,7 @@ const getFilesToMinify = function (dirPath, arrayOfFiles) {
         minifiedContent = jsMinified.code;
       }
 
-      await writeFile(file, minifiedContent);
+      await writeFile(file, minifiedContent, { encoding: 'utf-8' });
     } catch (error) {
       console.error(error);
       process.exit(1);
