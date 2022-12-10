@@ -98,7 +98,7 @@ export function popupOptionsBuilder(optionsToBuild, target) {
 
   groupedList.innerHTML = groupedListContent;
 
-  target.appendChild(groupedList);
+  target.insertAdjacentElement('beforebegin', groupedList);
 }
 
 /**

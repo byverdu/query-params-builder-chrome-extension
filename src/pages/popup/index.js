@@ -111,9 +111,15 @@ async function applyParamsToUrl() {
   }
 }
 
+function appendNewItemToList(event) {}
+
 document
   .getElementById('applyParams')
   .addEventListener('click', applyParamsToUrl);
+
+document
+  .getElementById('addNewBundle')
+  .addEventListener('click', appendNewItemToList);
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 chrome.storage.sync.get(null).then(console.log);
