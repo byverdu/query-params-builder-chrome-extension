@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "./build.sh"
+    "build": "./build.sh",
+    "lint": "eslint ./src/**/*.js"
   },
   "keywords": [],
   "author": "@byverdu",
