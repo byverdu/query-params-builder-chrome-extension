@@ -39,12 +39,13 @@ export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
   });
 }
 
-function listItemBuilder({
+export function listItemBuilder({
   id,
   bundleName,
   urlParamKey,
   checked,
   urlParamValue,
+  canDeleteFromPopup,
 }) {
   return `
   <li class="list-group-item">
@@ -55,7 +56,8 @@ function listItemBuilder({
       data-url-param-key="${urlParamKey}"
       data-bundle-name="${bundleName}"
       id="${id}"
-      ${checked && 'checked'}
+      ${(checked && 'checked') || ''}
+      data-can-delete-from-popup="${canDeleteFromPopup}"
     >
     <label class="form-check-label" for="${id}">${bundleName}</label>
     <input
@@ -65,6 +67,11 @@ function listItemBuilder({
       placeholder="${urlParamKey} value"
       value="${(urlParamValue && urlParamValue) || ''}"
     />
+    ${
+      (canDeleteFromPopup &&
+        '<button class="btn btn-danger delete-new-item">-</button>') ||
+      ''
+    }
   </li>
 `;
 }
@@ -74,11 +81,9 @@ function listItemBuilder({
  * @param {HTMLElement} target
  * @param {boolean} checked
  */
-export function popupOptionsBuilder(optionsToBuild, target) {
-  const groupedList = document.createElement('ul');
+export function popupOptionsBuilder(optionsToBuild) {
+  const listGroup = document.querySelector('.list-group');
   let groupedListContent = '';
-
-  groupedList.classList.add('list-group');
 
   for (const {
     id,
@@ -86,6 +91,7 @@ export function popupOptionsBuilder(optionsToBuild, target) {
     urlParamKey,
     urlParamValue,
     checked,
+    canDeleteFromPopup,
   } of optionsToBuild) {
     groupedListContent += listItemBuilder({
       id,
@@ -93,12 +99,20 @@ export function popupOptionsBuilder(optionsToBuild, target) {
       urlParamKey,
       checked,
       urlParamValue,
+      canDeleteFromPopup,
     });
   }
 
-  groupedList.innerHTML = groupedListContent;
+  if (listGroup) {
+    listGroup.insertAdjacentHTML('beforeend', groupedListContent);
+  } else {
+    const target = document.getElementById('selected_bundles');
+    const newListGroup = document.createElement('ul');
+    newListGroup.classList.add('list-group');
+    newListGroup.innerHTML = groupedListContent;
 
-  target.insertAdjacentElement('beforebegin', groupedList);
+    target.insertAdjacentElement('afterbegin', newListGroup);
+  }
 }
 
 /**
@@ -140,4 +154,13 @@ export function setToastContent({ toastType, bodyToastText }) {
 
 export function randomId() {
   return crypto.randomUUID();
+}
+
+export function castToBoolean(value) {
+  try {
+    const parsed = JSON.parse(value);
+    return Boolean(parsed);
+  } catch {
+    return false;
+  }
 }

@@ -41,6 +41,7 @@ function addBundleToOptions(e) {
       urlParamKey: urlParamKey.value,
       id: randomId(),
       checked: false,
+      canDeleteFromPopup: false,
     });
 
     optionsToTableDefinitionBuilder(globalOptions, tbody);

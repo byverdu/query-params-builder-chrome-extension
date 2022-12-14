@@ -1,5 +1,9 @@
 import { extensionApi, actions } from '../../utils/api.js';
-import { popupOptionsBuilder } from '../../utils/DOMHelpers.js';
+import {
+  popupOptionsBuilder,
+  randomId,
+  castToBoolean,
+} from '../../utils/DOMHelpers.js';
 
 const { sendMessage } = extensionApi;
 
@@ -36,9 +40,13 @@ async function restoreOptions() {
       }
     }
 
-    popupOptionsBuilder(result, document.getElementById('selected_bundles'));
+    popupOptionsBuilder(result);
     document.getElementById('popup-spinner').style.display = 'none';
     document.getElementById('content').style.visibility = 'visible';
+
+    document
+      .querySelectorAll('.delete-new-item')
+      .forEach(item => item.addEventListener('click', deleteNewItem));
   } catch (error) {
     console.error(`QueryParamsBuilder extension getOptions`, String(error));
   }
@@ -65,6 +73,9 @@ async function applyParamsToUrl() {
         // delete all to update only with checked ones
         urlParams.delete(input.value);
 
+        const canDeleteFromPopup = castToBoolean(
+          input.dataset.canDeleteFromPopup
+        );
         const bundleId = input.id;
         const urlParamKey = input.value;
         const urlParamValue = document.querySelector(
@@ -78,6 +89,7 @@ async function applyParamsToUrl() {
 
         tabInfoToSave.push({
           id: bundleId,
+          canDeleteFromPopup,
           checked: input.checked,
           urlParamKey,
           bundleName,
@@ -111,15 +123,114 @@ async function applyParamsToUrl() {
   }
 }
 
-function appendNewItemToList(event) {}
+async function appendNewItemToList(event) {
+  event.preventDefault();
+
+  const { elements } = event.target;
+  const inputsValues = Array.from(elements)
+    .filter(elem => elem.nodeName === 'INPUT')
+    .reduce(
+      (prev, curr) => {
+        return {
+          ...prev,
+          [curr.id]: curr.value,
+        };
+      },
+      { checked: false, id: randomId(), canDeleteFromPopup: true }
+    );
+  popupOptionsBuilder([inputsValues]);
+
+  document
+    .querySelectorAll('.delete-new-item')
+    .forEach(item => item.addEventListener('click', deleteNewItem));
+
+  const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
+  const tabInfoToSave = [];
+
+  /**
+   * @type HTMLInputElement[]
+   */
+  const checkboxes = Array.from(
+    document.querySelectorAll('input[type="checkbox"]')
+  );
+
+  for (const input of checkboxes) {
+    const canDeleteFromPopup = castToBoolean(input.dataset.canDeleteFromPopup);
+    const bundleId = input.id;
+    const urlParamKey = input.value;
+    const urlParamValue = document.querySelector(
+      `[data-id="${bundleId}"]`
+    ).value;
+    const bundleName = input.dataset.bundleName;
+
+    tabInfoToSave.push({
+      id: bundleId,
+      canDeleteFromPopup,
+      checked: input.checked,
+      urlParamKey,
+      bundleName,
+      urlParamValue,
+    });
+  }
+
+  await sendMessage({
+    type: actions.SET_STORAGE,
+    payload: {
+      key: 'QueryParamsBuilderTab',
+      value: {
+        [currentTab.id]: tabInfoToSave,
+      },
+    },
+  });
+}
+
+async function deleteNewItem(event) {
+  event.target.parentNode.remove();
+  const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
+  const tabInfoToSave = [];
+
+  /**
+   * @type HTMLInputElement[]
+   */
+  const checkboxes = Array.from(
+    document.querySelectorAll('input[type="checkbox"]')
+  );
+
+  for (const input of checkboxes) {
+    const canDeleteFromPopup = castToBoolean(input.dataset.canDeleteFromPopup);
+    const bundleId = input.id;
+    const urlParamKey = input.value;
+    const urlParamValue = document.querySelector(
+      `[data-id="${bundleId}"]`
+    ).value;
+    const bundleName = input.dataset.bundleName;
+
+    tabInfoToSave.push({
+      id: bundleId,
+      canDeleteFromPopup,
+      checked: input.checked,
+      urlParamKey,
+      bundleName,
+      urlParamValue,
+    });
+  }
+
+  await sendMessage({
+    type: actions.SET_STORAGE,
+    payload: {
+      key: 'QueryParamsBuilderTab',
+      value: {
+        [currentTab.id]: tabInfoToSave,
+      },
+    },
+  });
+}
 
 document
   .getElementById('applyParams')
   .addEventListener('click', applyParamsToUrl);
 
-document
-  .getElementById('addNewBundle')
-  .addEventListener('click', appendNewItemToList);
+document.querySelector('form').addEventListener('submit', appendNewItemToList);
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 chrome.storage.sync.get(null).then(console.log);
