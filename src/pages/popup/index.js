@@ -3,9 +3,16 @@ import {
   popupOptionsBuilder,
   randomId,
   castToBoolean,
+  getCheckboxesValues,
 } from '../../utils/DOMHelpers.js';
 
 const { sendMessage } = extensionApi;
+
+sendMessage({ type: actions.GET_CURRENT_TAB })
+  .then(currentTab => {
+    window.currentTab = currentTab;
+  })
+  .catch(console.error);
 
 async function restoreOptions() {
   try {
@@ -54,8 +61,7 @@ async function restoreOptions() {
 
 async function applyParamsToUrl() {
   try {
-    const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
-
+    const currentTab = window.currentTab ?? {};
     const { url: defaultUrl } = currentTab;
     const url = new URL(defaultUrl);
     const urlParams = new URLSearchParams(url.search || '');
@@ -144,34 +150,8 @@ async function appendNewItemToList(event) {
     .querySelectorAll('.delete-new-item')
     .forEach(item => item.addEventListener('click', deleteNewItem));
 
-  const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
-  const tabInfoToSave = [];
-
-  /**
-   * @type HTMLInputElement[]
-   */
-  const checkboxes = Array.from(
-    document.querySelectorAll('input[type="checkbox"]')
-  );
-
-  for (const input of checkboxes) {
-    const canDeleteFromPopup = castToBoolean(input.dataset.canDeleteFromPopup);
-    const bundleId = input.id;
-    const urlParamKey = input.value;
-    const urlParamValue = document.querySelector(
-      `[data-id="${bundleId}"]`
-    ).value;
-    const bundleName = input.dataset.bundleName;
-
-    tabInfoToSave.push({
-      id: bundleId,
-      canDeleteFromPopup,
-      checked: input.checked,
-      urlParamKey,
-      bundleName,
-      urlParamValue,
-    });
-  }
+  const currentTab = window.currentTab ?? {};
+  const tabInfoToSave = getCheckboxesValues();
 
   await sendMessage({
     type: actions.SET_STORAGE,
@@ -186,34 +166,8 @@ async function appendNewItemToList(event) {
 
 async function deleteNewItem(event) {
   event.target.parentNode.remove();
-  const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
-  const tabInfoToSave = [];
-
-  /**
-   * @type HTMLInputElement[]
-   */
-  const checkboxes = Array.from(
-    document.querySelectorAll('input[type="checkbox"]')
-  );
-
-  for (const input of checkboxes) {
-    const canDeleteFromPopup = castToBoolean(input.dataset.canDeleteFromPopup);
-    const bundleId = input.id;
-    const urlParamKey = input.value;
-    const urlParamValue = document.querySelector(
-      `[data-id="${bundleId}"]`
-    ).value;
-    const bundleName = input.dataset.bundleName;
-
-    tabInfoToSave.push({
-      id: bundleId,
-      canDeleteFromPopup,
-      checked: input.checked,
-      urlParamKey,
-      bundleName,
-      urlParamValue,
-    });
-  }
+  const currentTab = window.currentTab ?? {};
+  const tabInfoToSave = getCheckboxesValues();
 
   await sendMessage({
     type: actions.SET_STORAGE,
@@ -226,11 +180,17 @@ async function deleteNewItem(event) {
   });
 }
 
-document
-  .getElementById('applyParams')
-  .addEventListener('click', applyParamsToUrl);
+if (document.readyState === 'interactive') {
+  document.addEventListener('DOMContentLoaded', restoreOptions);
+  chrome.storage.sync.get(null).then(console.log);
+}
 
-document.querySelector('form').addEventListener('submit', appendNewItemToList);
+if (document.readyState === 'complete') {
+  document
+    .getElementById('applyParams')
+    .addEventListener('click', applyParamsToUrl);
 
-document.addEventListener('DOMContentLoaded', restoreOptions);
-chrome.storage.sync.get(null).then(console.log);
+  document
+    .querySelector('form')
+    .addEventListener('submit', appendNewItemToList);
+}

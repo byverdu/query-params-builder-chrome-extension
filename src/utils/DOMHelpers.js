@@ -164,3 +164,35 @@ export function castToBoolean(value) {
     return false;
   }
 }
+
+export function getCheckboxesValues() {
+  const tabInfoToSave = [];
+
+  /**
+   * @type HTMLInputElement[]
+   */
+  const checkboxes = Array.from(
+    document.querySelectorAll('input[type="checkbox"]')
+  );
+
+  for (const input of checkboxes) {
+    const canDeleteFromPopup = castToBoolean(input.dataset.canDeleteFromPopup);
+    const bundleId = input.id;
+    const urlParamKey = input.value;
+    const urlParamValue = document.querySelector(
+      `[data-id="${bundleId}"]`
+    ).value;
+    const bundleName = input.dataset.bundleName;
+
+    tabInfoToSave.push({
+      id: bundleId,
+      canDeleteFromPopup,
+      checked: input.checked,
+      urlParamKey,
+      bundleName,
+      urlParamValue,
+    });
+  }
+
+  return tabInfoToSave;
+}
