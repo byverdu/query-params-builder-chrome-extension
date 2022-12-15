@@ -26,6 +26,7 @@ async function restoreOptions() {
       payload: 'QueryParamsBuilderOptions',
     });
     const result = [];
+    const validOptions = options && Array.isArray(options) ? options : [];
 
     if (
       savedTabInfo &&
@@ -34,17 +35,13 @@ async function restoreOptions() {
     ) {
       result.push(...savedTabInfo[currentTab.id]);
 
-      if (options && Array.isArray(options)) {
-        for (const option of options) {
-          if (!result.find(item => item.id === option.id)) {
-            result.push(option);
-          }
+      for (const option of validOptions) {
+        if (!result.find(item => item.id === option.id)) {
+          result.push(option);
         }
       }
     } else {
-      if (options && Array.isArray(options)) {
-        result.push(...options);
-      }
+      result.push(...validOptions);
     }
 
     popupOptionsBuilder(result);
@@ -183,9 +180,6 @@ async function deleteNewItem(event) {
 if (document.readyState === 'interactive') {
   document.addEventListener('DOMContentLoaded', restoreOptions);
   chrome.storage.sync.get(null).then(console.log);
-}
-
-if (document.readyState === 'complete') {
   document
     .getElementById('applyParams')
     .addEventListener('click', applyParamsToUrl);
