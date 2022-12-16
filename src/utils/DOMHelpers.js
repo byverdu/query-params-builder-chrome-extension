@@ -26,17 +26,6 @@ export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
 
     tbody.innerHTML += tr;
   }
-
-  document.querySelectorAll('.delete-bundle').forEach(btn => {
-    btn.addEventListener('click', event => {
-      const id = event.currentTarget.dataset.bundleId;
-      const idToRemove = optionsToBuild.findIndex(item => item.id === id);
-      optionsToBuild.splice(idToRemove, 1);
-      document.getElementById(id).remove();
-
-      document.getElementById('saveOptions').removeAttribute('disabled');
-    });
-  });
 }
 
 export function listItemBuilder({
@@ -136,10 +125,6 @@ export function setToastContent({ toastType, bodyToastText }) {
 
     headerToast = toastElement.querySelector('.toast-header .badge');
     bodyToast = toastElement.querySelector('.toast-body');
-
-    toastElement.addEventListener('hide.bs.toast', () => {
-      document.getElementById('saveOptions').setAttribute('disabled', 'true');
-    });
   }
 
   if (toast && headerToast && bodyToast) {

@@ -11,7 +11,7 @@ import { extensionApi, actions } from '../../utils/api.js';
 const globalOptions = [];
 const { sendMessage } = extensionApi;
 
-function addBundleToOptions(e) {
+async function addBundleToOptions(e) {
   e.preventDefault();
 
   const errorMsg = 'This value can not be empty';
@@ -48,25 +48,21 @@ function addBundleToOptions(e) {
     bundleName.value = '';
     urlParamKey.value = '';
 
-    document.getElementById('saveOptions').removeAttribute('disabled');
-  }
-}
+    try {
+      await sendMessage({
+        type: actions.SET_STORAGE,
+        payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
+      });
 
-async function saveOptions() {
-  try {
-    await sendMessage({
-      type: actions.SET_STORAGE,
-      payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
-    });
+      setToastContent({
+        toastType: 'success',
+        bodyToastText: 'Options Saved Successfully',
+      });
+    } catch (error) {
+      console.error(`QueryParamsBuilder extension setOptions`, String(error));
 
-    setToastContent({
-      toastType: 'success',
-      bodyToastText: 'Options Saved Successfully',
-    });
-  } catch (error) {
-    console.error(`QueryParamsBuilder extension setOptions`, String(error));
-
-    setToastContent({ toastType: 'danger', bodyToastText: error.message });
+      setToastContent({ toastType: 'danger', bodyToastText: error.message });
+    }
   }
 }
 
@@ -84,6 +80,10 @@ async function restoreOptions() {
 
       optionsToTableDefinitionBuilder(globalOptions, tbody);
 
+      document.querySelectorAll('.delete-bundle').forEach(btn => {
+        btn.addEventListener('click', deleteSavedParam);
+      });
+
       setToastContent({
         toastType: 'success',
         bodyToastText: 'Options Restored Successfully',
@@ -91,6 +91,29 @@ async function restoreOptions() {
     }
   } catch (error) {
     console.error(`QueryParamsBuilder extension getOptions`, String(error));
+
+    setToastContent({ toastType: 'danger', bodyToastText: error.message });
+  }
+}
+
+async function deleteSavedParam(event) {
+  const id = event.currentTarget.dataset.bundleId;
+  const idToRemove = globalOptions.findIndex(item => item.id === id);
+  globalOptions.splice(idToRemove, 1);
+  document.getElementById(id).remove();
+
+  try {
+    await sendMessage({
+      type: actions.SET_STORAGE,
+      payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
+    });
+
+    setToastContent({
+      toastType: 'success',
+      bodyToastText: 'Options Saved Successfully',
+    });
+  } catch (error) {
+    console.error(`QueryParamsBuilder extension setOptions`, String(error));
 
     setToastContent({ toastType: 'danger', bodyToastText: error.message });
   }
@@ -117,7 +140,6 @@ async function removeAll() {
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.getElementById('saveOptions').addEventListener('click', saveOptions);
 document
   .getElementById('addBundle')
   .addEventListener('click', addBundleToOptions);
