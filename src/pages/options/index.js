@@ -11,6 +11,39 @@ import { extensionApi, actions } from '../../utils/api.js';
 const globalOptions = [];
 const { sendMessage } = extensionApi;
 
+async function restoreOptions() {
+  try {
+    const options = await sendMessage({
+      type: actions.GET_STORAGE,
+      payload: 'QueryParamsBuilderOptions',
+    });
+
+    if (options && Array.isArray(options)) {
+      const tbody = document.querySelector('.selected_bundles tbody');
+
+      globalOptions.push(...options);
+
+      optionsToTableDefinitionBuilder(globalOptions, tbody);
+
+      document
+        .querySelectorAll('.delete-bundle')
+        .forEach(btn => btn.addEventListener('click', deleteSavedParam));
+      document
+        .querySelectorAll('.contentEditable')
+        .forEach(item => item.addEventListener('blur', editSavedParam));
+
+      setToastContent({
+        toastType: 'success',
+        bodyToastText: 'Options Restored Successfully',
+      });
+    }
+  } catch (error) {
+    console.error(`QueryParamsBuilder extension getOptions`, String(error));
+
+    setToastContent({ toastType: 'danger', bodyToastText: error.message });
+  }
+}
+
 async function addBundleToOptions(e) {
   e.preventDefault();
 
@@ -48,6 +81,10 @@ async function addBundleToOptions(e) {
     bundleName.value = '';
     urlParamKey.value = '';
 
+    document
+      .querySelectorAll('.contentEditable')
+      .forEach(item => item.addEventListener('blur', editSavedParam));
+
     try {
       await sendMessage({
         type: actions.SET_STORAGE,
@@ -59,40 +96,10 @@ async function addBundleToOptions(e) {
         bodyToastText: 'Options Saved Successfully',
       });
     } catch (error) {
-      console.error(`QueryParamsBuilder extension setOptions`, String(error));
+      console.error(`QueryParamsBuilder extension addBundle`, String(error));
 
       setToastContent({ toastType: 'danger', bodyToastText: error.message });
     }
-  }
-}
-
-async function restoreOptions() {
-  try {
-    const options = await sendMessage({
-      type: actions.GET_STORAGE,
-      payload: 'QueryParamsBuilderOptions',
-    });
-
-    if (options && Array.isArray(options)) {
-      const tbody = document.querySelector('.selected_bundles tbody');
-
-      globalOptions.push(...options);
-
-      optionsToTableDefinitionBuilder(globalOptions, tbody);
-
-      document.querySelectorAll('.delete-bundle').forEach(btn => {
-        btn.addEventListener('click', deleteSavedParam);
-      });
-
-      setToastContent({
-        toastType: 'success',
-        bodyToastText: 'Options Restored Successfully',
-      });
-    }
-  } catch (error) {
-    console.error(`QueryParamsBuilder extension getOptions`, String(error));
-
-    setToastContent({ toastType: 'danger', bodyToastText: error.message });
   }
 }
 
@@ -113,9 +120,46 @@ async function deleteSavedParam(event) {
       bodyToastText: 'Options Saved Successfully',
     });
   } catch (error) {
-    console.error(`QueryParamsBuilder extension setOptions`, String(error));
+    console.error(`QueryParamsBuilder extension delete`, String(error));
 
     setToastContent({ toastType: 'danger', bodyToastText: error.message });
+  }
+}
+
+async function editSavedParam(event) {
+  /**
+   * @type HTMLInputElement
+   */
+  const inputElem = event.target;
+  const lastValue = inputElem.innerText;
+  const valueType = inputElem.dataset.valueType;
+  const initialValue = inputElem.dataset.initialValue;
+
+  if (lastValue !== initialValue) {
+    const id = globalOptions.findIndex(
+      item => item[valueType] === initialValue
+    );
+    const item =
+      globalOptions.find(item => item[valueType] === initialValue) || {};
+    item[valueType] = lastValue;
+
+    globalOptions.splice(id, 1, item);
+
+    try {
+      await sendMessage({
+        type: actions.SET_STORAGE,
+        payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
+      });
+
+      setToastContent({
+        toastType: 'success',
+        bodyToastText: 'Options Saved Successfully',
+      });
+    } catch (error) {
+      console.error(`QueryParamsBuilder extension edit`, String(error));
+
+      setToastContent({ toastType: 'danger', bodyToastText: error.message });
+    }
   }
 }
 
@@ -144,3 +188,4 @@ document
   .getElementById('addBundle')
   .addEventListener('click', addBundleToOptions);
 document.getElementById('removeAll').addEventListener('click', removeAll);
+chrome.storage.sync.get(null).then(console.log).catch(console.error);

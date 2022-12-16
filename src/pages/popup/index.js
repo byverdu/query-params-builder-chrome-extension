@@ -179,7 +179,6 @@ async function deleteNewItem(event) {
 
 if (document.readyState === 'interactive') {
   document.addEventListener('DOMContentLoaded', restoreOptions);
-  chrome.storage.sync.get(null).then(console.log);
   document
     .getElementById('applyParams')
     .addEventListener('click', applyParamsToUrl);
@@ -187,4 +186,5 @@ if (document.readyState === 'interactive') {
   document
     .querySelector('form')
     .addEventListener('submit', appendNewItemToList);
+  chrome.storage.sync.get(null).then(console.log).catch(console.error);
 }

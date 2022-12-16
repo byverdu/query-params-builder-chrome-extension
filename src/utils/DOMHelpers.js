@@ -1,8 +1,8 @@
 function tableRowBuilder(id, bundleName, urlParamKey) {
   return `
   <tr id="${id}">
-  <td>${bundleName}</td>
-  <td>${urlParamKey}</td>
+  <td class="contentEditable" data-initial-value="${bundleName}" data-value-type="bundleName" contentEditable="true">${bundleName}</td>
+  <td class="contentEditable" data-initial-value="${urlParamKey}" data-value-type="urlParamKey" contentEditable="true">${urlParamKey}</td>
   <td>
     <button data-bundle-id="${id}" class="btn btn-outline-danger delete-bundle">
       Delete
