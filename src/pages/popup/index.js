@@ -150,31 +150,42 @@ async function appendNewItemToList(event) {
   const currentTab = window.currentTab ?? {};
   const tabInfoToSave = getCheckboxesValues();
 
-  await sendMessage({
-    type: actions.SET_STORAGE,
-    payload: {
-      key: 'QueryParamsBuilderTab',
-      value: {
-        [currentTab.id]: tabInfoToSave,
+  try {
+    await sendMessage({
+      type: actions.SET_STORAGE,
+      payload: {
+        key: 'QueryParamsBuilderTab',
+        value: {
+          [currentTab.id]: tabInfoToSave,
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error(
+      `QueryParamsBuilder extension appendNewItemToList`,
+      String(error)
+    );
+  }
 }
 
 async function deleteNewItem(event) {
-  event.target.parentNode.remove();
-  const currentTab = window.currentTab ?? {};
-  const tabInfoToSave = getCheckboxesValues();
+  try {
+    event.target.parentNode.remove();
+    const currentTab = window.currentTab ?? {};
+    const tabInfoToSave = getCheckboxesValues();
 
-  await sendMessage({
-    type: actions.SET_STORAGE,
-    payload: {
-      key: 'QueryParamsBuilderTab',
-      value: {
-        [currentTab.id]: tabInfoToSave,
+    await sendMessage({
+      type: actions.SET_STORAGE,
+      payload: {
+        key: 'QueryParamsBuilderTab',
+        value: {
+          [currentTab.id]: tabInfoToSave,
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error(`QueryParamsBuilder extension deleteNewItem`, String(error));
+  }
 }
 
 if (document.readyState === 'interactive') {
