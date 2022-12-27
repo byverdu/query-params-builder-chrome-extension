@@ -111,11 +111,17 @@ async function applyParamsToUrl() {
         payload: updatedUrl,
       });
 
+      const savedTabs = await sendMessage({
+        type: actions.GET_STORAGE,
+        payload: 'QueryParamsBuilderTab',
+      });
+
       await sendMessage({
         type: actions.SET_STORAGE,
         payload: {
           key: 'QueryParamsBuilderTab',
           value: {
+            ...savedTabs,
             [updatedTab.id]: tabInfoToSave,
           },
         },
