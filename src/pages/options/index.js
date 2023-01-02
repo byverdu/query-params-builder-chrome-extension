@@ -84,6 +84,9 @@ async function addBundleToOptions(e) {
     document
       .querySelectorAll('.contentEditable')
       .forEach(item => item.addEventListener('blur', editSavedParam));
+    document
+      .querySelector('.delete-bundle')
+      .addEventListener('click', deleteSavedParam);
 
     try {
       await sendMessage({
@@ -106,13 +109,31 @@ async function addBundleToOptions(e) {
 async function deleteSavedParam(event) {
   const id = event.currentTarget.dataset.bundleId;
   const idToRemove = globalOptions.findIndex(item => item.id === id);
-  globalOptions.splice(idToRemove, 1);
+
   document.getElementById(id).remove();
+  globalOptions.splice(idToRemove, 1);
 
   try {
+    const savedTabInfo = await sendMessage({
+      type: actions.GET_STORAGE,
+      payload: 'QueryParamsBuilderTab',
+    });
+    const newTabValues = Object.keys(savedTabInfo).reduce((prev, curr) => {
+      const filteredValues = savedTabInfo[curr].filter(item => item.id !== id);
+
+      return {
+        ...prev,
+        [curr]: filteredValues,
+      };
+    }, {});
+
     await sendMessage({
       type: actions.SET_STORAGE,
       payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
+    });
+    await sendMessage({
+      type: actions.SET_STORAGE,
+      payload: { key: 'QueryParamsBuilderTab', value: newTabValues },
     });
 
     setToastContent({
@@ -131,21 +152,48 @@ async function editSavedParam(event) {
    * @type HTMLInputElement
    */
   const inputElem = event.target;
-  const lastValue = inputElem.innerText;
+  const newValue = inputElem.innerText;
   const valueType = inputElem.dataset.valueType;
   const initialValue = inputElem.dataset.initialValue;
 
-  if (lastValue !== initialValue) {
+  if (newValue !== initialValue) {
+    inputElem.dataset.initialValue = newValue;
     const id = globalOptions.findIndex(
       item => item[valueType] === initialValue
     );
     const item =
       globalOptions.find(item => item[valueType] === initialValue) || {};
-    item[valueType] = lastValue;
+    item[valueType] = newValue;
 
     globalOptions.splice(id, 1, item);
 
     try {
+      const savedTabInfo = await sendMessage({
+        type: actions.GET_STORAGE,
+        payload: 'QueryParamsBuilderTab',
+      });
+
+      if (savedTabInfo) {
+        const newTabValues = Object.keys(savedTabInfo).reduce((prev, curr) => {
+          const newValues = savedTabInfo[curr].reduce((prev, curr) => {
+            if (curr[valueType] === initialValue) {
+              curr[valueType] = newValue;
+            }
+            return [...prev, curr];
+          }, []);
+
+          return {
+            ...prev,
+            [curr]: newValues,
+          };
+        }, {});
+
+        await sendMessage({
+          type: actions.SET_STORAGE,
+          payload: { key: 'QueryParamsBuilderTab', value: newTabValues },
+        });
+      }
+
       await sendMessage({
         type: actions.SET_STORAGE,
         payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
