@@ -140,9 +140,11 @@ async function appendNewItemToList(event) {
     .filter(elem => elem.nodeName === 'INPUT')
     .reduce(
       (prev, curr) => {
+        const value = curr.value;
+        curr.value = '';
         return {
           ...prev,
-          [curr.id]: curr.value,
+          [curr.id]: value,
         };
       },
       { checked: false, id: randomId(), canDeleteFromPopup: true }
