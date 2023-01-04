@@ -44,7 +44,10 @@ async function restoreOptions() {
       result.push(...validOptions);
     }
 
-    popupOptionsBuilder(result);
+    if (result.length > 0) {
+      popupOptionsBuilder(result);
+    }
+
     document.getElementById('popup-spinner').style.display = 'none';
     document.getElementById('content').style.visibility = 'visible';
 
@@ -178,7 +181,7 @@ async function appendNewItemToList(event) {
 
 async function deleteNewItem(event) {
   try {
-    event.target.parentNode.remove();
+    event.target.parentNode.parentNode.remove();
     const currentTab = window.currentTab ?? {};
     const tabInfoToSave = getCheckboxesValues();
 

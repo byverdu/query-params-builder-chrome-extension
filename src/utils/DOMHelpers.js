@@ -1,4 +1,4 @@
-function tableRowBuilder(id, bundleName, urlParamKey) {
+function optionsTableRowBuilder(id, bundleName, urlParamKey) {
   return `
   <tr id="${id}">
   <td class="contentEditable" data-initial-value="${bundleName}" data-value-type="bundleName" contentEditable="true">${bundleName}</td>
@@ -18,7 +18,7 @@ function tableRowBuilder(id, bundleName, urlParamKey) {
  */
 export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
   for (const option of optionsToBuild) {
-    const tr = tableRowBuilder(
+    const tr = optionsTableRowBuilder(
       option.id,
       option.bundleName,
       option.urlParamKey
@@ -28,7 +28,7 @@ export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
   }
 }
 
-export function listItemBuilder({
+export function popupTableRowBuilder({
   id,
   bundleName,
   urlParamKey,
@@ -37,42 +37,46 @@ export function listItemBuilder({
   canDeleteFromPopup,
 }) {
   return `
-  <li class="list-group-item">
-    <input
-      class="form-check-input me-1"
-      type="checkbox"
-      value="${urlParamKey}"
-      data-url-param-key="${urlParamKey}"
-      data-bundle-name="${bundleName}"
-      id="${id}"
-      ${(checked && 'checked') || ''}
-      data-can-delete-from-popup="${canDeleteFromPopup}"
-    >
-    <label class="form-check-label" for="${id}">${bundleName}</label>
-    <input
-      type="text"
-      class="form-control"
-      data-id="${id}"
-      placeholder="${urlParamKey} value"
-      value="${(urlParamValue && urlParamValue) || ''}"
-    />
+  <tr>
+    <td>
+      <input
+        class="form-check-input me-1"
+        type="checkbox"
+        value="${urlParamKey}"
+        data-url-param-key="${urlParamKey}"
+        data-bundle-name="${bundleName}"
+        id="${id}"
+        ${(checked && 'checked') || ''}
+        data-can-delete-from-popup="${canDeleteFromPopup}"
+      >
+      <label class="form-check-label" for="${id}">${bundleName}</label>
+    </td>
+    <td>
+      <input
+        type="text"
+        class="form-control"
+        data-id="${id}"
+        placeholder="${urlParamKey} value"
+        value="${(urlParamValue && urlParamValue) || ''}"
+      />
+    </td>
     ${
       (canDeleteFromPopup &&
-        '<button class="btn btn-danger delete-new-item">-</button>') ||
-      ''
+        '<td><button class="btn btn-danger delete-new-item">-</button></td>') ||
+      '<td></td>'
     }
-  </li>
+  </tr>
 `;
 }
 
 /**
  * @param {import('../types/index.js').ExtensionOptions[]} optionsToBuild
- * @param {HTMLElement} target
- * @param {boolean} checked
  */
 export function popupOptionsBuilder(optionsToBuild) {
-  const listGroup = document.querySelector('.list-group');
-  let groupedListContent = '';
+  const table = document.querySelector('.table');
+  table.style.visibility = 'visible';
+  const tbody = table.querySelector('tbody');
+  let tableRows = '';
 
   for (const {
     id,
@@ -82,7 +86,7 @@ export function popupOptionsBuilder(optionsToBuild) {
     checked,
     canDeleteFromPopup,
   } of optionsToBuild) {
-    groupedListContent += listItemBuilder({
+    tableRows += popupTableRowBuilder({
       id,
       bundleName,
       urlParamKey,
@@ -92,15 +96,8 @@ export function popupOptionsBuilder(optionsToBuild) {
     });
   }
 
-  if (listGroup) {
-    listGroup.insertAdjacentHTML('beforeend', groupedListContent);
-  } else {
-    const target = document.getElementById('selected_bundles');
-    const newListGroup = document.createElement('ul');
-    newListGroup.classList.add('list-group');
-    newListGroup.innerHTML = groupedListContent;
-
-    target.insertAdjacentElement('afterbegin', newListGroup);
+  if (tbody) {
+    tbody.insertAdjacentHTML('beforeend', tableRows);
   }
 }
 
