@@ -38,7 +38,7 @@ export function popupTableRowBuilder({
 }) {
   return `
   <tr>
-    <td>
+    <td class="td-checkbox">
       <input
         class="form-check-input me-1"
         type="checkbox"
@@ -154,7 +154,7 @@ export function getCheckboxesValues() {
    * @type HTMLInputElement[]
    */
   const checkboxes = Array.from(
-    document.querySelectorAll('input[type="checkbox"]')
+    document.querySelectorAll('tbody input[type="checkbox"]')
   );
 
   for (const input of checkboxes) {

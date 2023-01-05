@@ -48,6 +48,11 @@ async function restoreOptions() {
       popupOptionsBuilder(result);
     }
 
+    if (result.every(item => item.checked)) {
+      document.querySelector('.check-all').checked = true;
+    }
+
+    document.querySelector('.wrapper').style.width = '800px';
     document.getElementById('popup-spinner').style.display = 'none';
     document.getElementById('content').style.visibility = 'visible';
 
@@ -72,7 +77,7 @@ async function applyParamsToUrl() {
        * @type HTMLInputElement[]
        */
       const checkboxes = Array.from(
-        document.querySelectorAll('input[type="checkbox"]')
+        document.querySelectorAll('tbody input[type="checkbox"]')
       );
 
       for (const input of checkboxes) {
@@ -199,11 +204,20 @@ async function deleteNewItem(event) {
   }
 }
 
+function checkAllHandler(event) {
+  document
+    .querySelectorAll('tbody input[type="checkbox"]')
+    .forEach(elem => (elem.checked = event.target.checked));
+}
+
 if (document.readyState === 'interactive') {
   document.addEventListener('DOMContentLoaded', restoreOptions);
   document
     .getElementById('applyParams')
     .addEventListener('click', applyParamsToUrl);
+  document
+    .querySelector('.check-all')
+    .addEventListener('change', checkAllHandler);
 
   document
     .querySelector('form')

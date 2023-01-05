@@ -11,9 +11,9 @@
     <link href="../../libs/bootstrap.min.css" rel="stylesheet" />
 
     <style>
-      .container-fluid {
-        margin-top: 20px;
-        width: 720px;
+      .wrapper {
+        padding-top: 20px;
+        box-sizing: content-box;
       }
 
       body::-webkit-scrollbar {
@@ -75,91 +75,119 @@
       .table {
         visibility: hidden;
       }
+
+      .td-checkbox {
+        display: flex;
+        height: 54px;
+        align-items: center;
+      }
+      .td-checkbox label {
+        margin-left: 12px;
+      }
     </style>
   </head>
   <body>
-    <div class="container" id="popup-spinner">
-      <div>
-        <div class="spinner-border text-primary" role="status"></div>
+    <div class="wrapper">
+      <div class="container" id="popup-spinner">
+        <div>
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
       </div>
-    </div>
-    <div class="container-fluid" id="content">
-      <div class="row"><h3>QueryParamsBuilder</h3></div>
-      <div class="row" style="padding: 0 12px">
-        <table class="table table-striped table-bordered">
-          <thead>
-            <tr>
-              <th scope="col">Check to Apply</th>
-              <th scope="col">Url param value</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-
-      <div class="row">
-        <div class="collapse" id="extraParam" style="padding: 0">
-          <div class="card card-body">
-            <form>
-              <div class="col-12">
-                <input
-                  required
-                  type="text"
-                  class="form-control"
-                  id="bundleName"
-                  placeholder="Bundle Name"
-                />
-              </div>
-              <div class="col-12">
-                <input
-                  required
-                  type="text"
-                  class="form-control"
-                  id="urlParamKey"
-                  placeholder="Url param key"
-                />
-              </div>
-              <div class="col-12">
-                <input
-                  required
-                  type="text"
-                  class="form-control"
-                  id="urlParamValue"
-                  placeholder="Url param value"
-                />
-              </div>
-              <div class="col-12">
-                <button
-                  id="addNewBundle"
-                  style="width: 100%"
-                  type="submit"
-                  class="btn btn-outline-primary"
+      <div class="container-fluid" id="content">
+        <div class="row"><h3>QueryParamsBuilder</h3></div>
+        <div class="row" style="padding: 0 12px">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th
+                  scope="col"
+                  style="display: flex; justify-content: space-between"
                 >
-                  Add Bundle
-                </button>
-              </div>
-            </form>
+                  <span>Params to Apply</span>
+                  |
+                  <label for="check-all">
+                    <input
+                      id="check-all"
+                      class="form-check-input check-all"
+                      type="checkbox"
+                    />
+                    Check All
+                  </label>
+                </th>
+                <th scope="col">Url param value</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="row">
+          <div class="collapse" id="extraParam" style="padding: 0">
+            <div class="card card-body">
+              <form>
+                <div class="col-12">
+                  <input
+                    required
+                    type="text"
+                    class="form-control"
+                    id="bundleName"
+                    placeholder="Bundle Name"
+                  />
+                </div>
+                <div class="col-12">
+                  <input
+                    required
+                    type="text"
+                    class="form-control"
+                    id="urlParamKey"
+                    placeholder="Url param key"
+                  />
+                </div>
+                <div class="col-12">
+                  <input
+                    required
+                    type="text"
+                    class="form-control"
+                    id="urlParamValue"
+                    placeholder="Url param value"
+                  />
+                </div>
+                <div class="col-12">
+                  <button
+                    id="addNewBundle"
+                    style="width: 100%"
+                    type="submit"
+                    class="btn btn-outline-primary"
+                  >
+                    Add Bundle
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="row actions">
-        <div class="col-6">
-          <button id="applyParams" class="btn btn-outline-primary action-btns">
-            Apply Params
-          </button>
-        </div>
-        <div class="col-6">
-          <a
-            class="btn btn-outline-success action-btns"
-            data-bs-toggle="collapse"
-            href="#extraParam"
-            role="button"
-            aria-expanded="false"
-            aria-controls="extraParam"
-          >
-            Add Param
-          </a>
+        <div class="row actions">
+          <div class="col-6">
+            <button
+              id="applyParams"
+              class="btn btn-outline-primary action-btns"
+            >
+              Apply Params
+            </button>
+          </div>
+          <div class="col-6">
+            <a
+              class="btn btn-outline-success action-btns"
+              data-bs-toggle="collapse"
+              href="#extraParam"
+              role="button"
+              aria-expanded="false"
+              aria-controls="extraParam"
+            >
+              Add Param
+            </a>
+          </div>
         </div>
       </div>
     </div>
