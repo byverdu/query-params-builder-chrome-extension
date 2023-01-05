@@ -11,7 +11,40 @@ import { extensionApi, actions } from '../../utils/api.js';
 const globalOptions = [];
 const { sendMessage } = extensionApi;
 
-function addBundleToOptions(e) {
+async function restoreOptions() {
+  try {
+    const options = await sendMessage({
+      type: actions.GET_STORAGE,
+      payload: 'QueryParamsBuilderOptions',
+    });
+
+    if (options && Array.isArray(options)) {
+      const tbody = document.querySelector('.selected_bundles tbody');
+
+      globalOptions.push(...options);
+
+      optionsToTableDefinitionBuilder(globalOptions, tbody);
+
+      document
+        .querySelectorAll('.delete-bundle')
+        .forEach(btn => btn.addEventListener('click', deleteSavedParam));
+      document
+        .querySelectorAll('.contentEditable')
+        .forEach(item => item.addEventListener('blur', editSavedParam));
+
+      setToastContent({
+        toastType: 'success',
+        bodyToastText: 'Options Restored Successfully',
+      });
+    }
+  } catch (error) {
+    console.error(`QueryParamsBuilder extension getOptions`, String(error));
+
+    setToastContent({ toastType: 'danger', bodyToastText: error.message });
+  }
+}
+
+async function addBundleToOptions(e) {
   e.preventDefault();
 
   const errorMsg = 'This value can not be empty';
@@ -41,21 +74,66 @@ function addBundleToOptions(e) {
       urlParamKey: urlParamKey.value,
       id: randomId(),
       checked: false,
+      canDeleteFromPopup: false,
     });
 
     optionsToTableDefinitionBuilder(globalOptions, tbody);
     bundleName.value = '';
     urlParamKey.value = '';
 
-    document.getElementById('saveOptions').removeAttribute('disabled');
+    document
+      .querySelectorAll('.contentEditable')
+      .forEach(item => item.addEventListener('blur', editSavedParam));
+    document
+      .querySelector('.delete-bundle')
+      .addEventListener('click', deleteSavedParam);
+
+    try {
+      await sendMessage({
+        type: actions.SET_STORAGE,
+        payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
+      });
+
+      setToastContent({
+        toastType: 'success',
+        bodyToastText: 'Options Saved Successfully',
+      });
+    } catch (error) {
+      console.error(`QueryParamsBuilder extension addBundle`, String(error));
+
+      setToastContent({ toastType: 'danger', bodyToastText: error.message });
+    }
   }
 }
 
-async function saveOptions() {
+async function deleteSavedParam(event) {
+  const id = event.currentTarget.dataset.bundleId;
+  const idToRemove = globalOptions.findIndex(item => item.id === id);
+
+  document.getElementById(id).remove();
+  globalOptions.splice(idToRemove, 1);
+
   try {
+    const savedTabInfo = await sendMessage({
+      type: actions.GET_STORAGE,
+      payload: 'QueryParamsBuilderTab',
+    });
+    const newTabValues = Object.keys(savedTabInfo).reduce((prev, curr) => {
+      const filteredValues = savedTabInfo[curr].filter(item => item.id !== id);
+
+      return {
+        ...prev,
+        [curr]: filteredValues,
+      };
+    }, {});
+
     await sendMessage({
       type: actions.SET_STORAGE,
       payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
+    });
+    await sendMessage({
+      type: actions.SET_STORAGE,
+      payload: { key: 'QueryParamsBuilderTab', value: newTabValues },
     });
 
     setToastContent({
@@ -63,35 +141,73 @@ async function saveOptions() {
       bodyToastText: 'Options Saved Successfully',
     });
   } catch (error) {
-    console.error(`QueryParamsBuilder extension setOptions`, String(error));
+    console.error(`QueryParamsBuilder extension delete`, String(error));
 
     setToastContent({ toastType: 'danger', bodyToastText: error.message });
   }
 }
 
-async function restoreOptions() {
-  try {
-    const options = await sendMessage({
-      type: actions.GET_STORAGE,
-      payload: 'QueryParamsBuilderOptions',
-    });
+async function editSavedParam(event) {
+  /**
+   * @type HTMLInputElement
+   */
+  const inputElem = event.target;
+  const newValue = inputElem.innerText;
+  const valueType = inputElem.dataset.valueType;
+  const initialValue = inputElem.dataset.initialValue;
 
-    if (options && Array.isArray(options)) {
-      const tbody = document.querySelector('.selected_bundles tbody');
+  if (newValue !== initialValue) {
+    inputElem.dataset.initialValue = newValue;
+    const id = globalOptions.findIndex(
+      item => item[valueType] === initialValue
+    );
+    const item =
+      globalOptions.find(item => item[valueType] === initialValue) || {};
+    item[valueType] = newValue;
 
-      globalOptions.push(...options);
+    globalOptions.splice(id, 1, item);
 
-      optionsToTableDefinitionBuilder(globalOptions, tbody);
+    try {
+      const savedTabInfo = await sendMessage({
+        type: actions.GET_STORAGE,
+        payload: 'QueryParamsBuilderTab',
+      });
+
+      if (savedTabInfo) {
+        const newTabValues = Object.keys(savedTabInfo).reduce((prev, curr) => {
+          const newValues = savedTabInfo[curr].reduce((prev, curr) => {
+            if (curr[valueType] === initialValue) {
+              curr[valueType] = newValue;
+            }
+            return [...prev, curr];
+          }, []);
+
+          return {
+            ...prev,
+            [curr]: newValues,
+          };
+        }, {});
+
+        await sendMessage({
+          type: actions.SET_STORAGE,
+          payload: { key: 'QueryParamsBuilderTab', value: newTabValues },
+        });
+      }
+
+      await sendMessage({
+        type: actions.SET_STORAGE,
+        payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
+      });
 
       setToastContent({
         toastType: 'success',
-        bodyToastText: 'Options Restored Successfully',
+        bodyToastText: 'Options Saved Successfully',
       });
-    }
-  } catch (error) {
-    console.error(`QueryParamsBuilder extension getOptions`, String(error));
+    } catch (error) {
+      console.error(`QueryParamsBuilder extension edit`, String(error));
 
-    setToastContent({ toastType: 'danger', bodyToastText: error.message });
+      setToastContent({ toastType: 'danger', bodyToastText: error.message });
+    }
   }
 }
 
@@ -116,8 +232,8 @@ async function removeAll() {
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.getElementById('saveOptions').addEventListener('click', saveOptions);
 document
   .getElementById('addBundle')
   .addEventListener('click', addBundleToOptions);
 document.getElementById('removeAll').addEventListener('click', removeAll);
+chrome.storage.sync.get(null).then(console.log).catch(console.error);

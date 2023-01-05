@@ -1,7 +1,18 @@
 import { extensionApi, actions } from '../../utils/api.js';
-import { popupOptionsBuilder } from '../../utils/DOMHelpers.js';
+import {
+  popupOptionsBuilder,
+  randomId,
+  castToBoolean,
+  getCheckboxesValues,
+} from '../../utils/DOMHelpers.js';
 
 const { sendMessage } = extensionApi;
+
+sendMessage({ type: actions.GET_CURRENT_TAB })
+  .then(currentTab => {
+    window.currentTab = currentTab;
+  })
+  .catch(console.error);
 
 async function restoreOptions() {
   try {
@@ -15,6 +26,7 @@ async function restoreOptions() {
       payload: 'QueryParamsBuilderOptions',
     });
     const result = [];
+    const validOptions = options && Array.isArray(options) ? options : [];
 
     if (
       savedTabInfo &&
@@ -23,22 +35,30 @@ async function restoreOptions() {
     ) {
       result.push(...savedTabInfo[currentTab.id]);
 
-      if (options && Array.isArray(options)) {
-        for (const option of options) {
-          if (!result.find(item => item.id === option.id)) {
-            result.push(option);
-          }
+      for (const option of validOptions) {
+        if (!result.find(item => item.id === option.id)) {
+          result.push(option);
         }
       }
     } else {
-      if (options && Array.isArray(options)) {
-        result.push(...options);
-      }
+      result.push(...validOptions);
     }
 
-    popupOptionsBuilder(result, document.getElementById('selected_bundles'));
+    if (result.length > 0) {
+      popupOptionsBuilder(result);
+    }
+
+    if (result.every(item => item.checked)) {
+      document.querySelector('.check-all').checked = true;
+    }
+
+    document.querySelector('.wrapper').style.width = '800px';
     document.getElementById('popup-spinner').style.display = 'none';
     document.getElementById('content').style.visibility = 'visible';
+
+    document
+      .querySelectorAll('.delete-new-item')
+      .forEach(item => item.addEventListener('click', deleteNewItem));
   } catch (error) {
     console.error(`QueryParamsBuilder extension getOptions`, String(error));
   }
@@ -46,8 +66,7 @@ async function restoreOptions() {
 
 async function applyParamsToUrl() {
   try {
-    const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
-
+    const currentTab = window.currentTab ?? {};
     const { url: defaultUrl } = currentTab;
     const url = new URL(defaultUrl);
     const urlParams = new URLSearchParams(url.search || '');
@@ -58,13 +77,16 @@ async function applyParamsToUrl() {
        * @type HTMLInputElement[]
        */
       const checkboxes = Array.from(
-        document.querySelectorAll('input[type="checkbox"]')
+        document.querySelectorAll('tbody input[type="checkbox"]')
       );
 
       for (const input of checkboxes) {
         // delete all to update only with checked ones
         urlParams.delete(input.value);
 
+        const canDeleteFromPopup = castToBoolean(
+          input.dataset.canDeleteFromPopup
+        );
         const bundleId = input.id;
         const urlParamKey = input.value;
         const urlParamValue = document.querySelector(
@@ -78,6 +100,7 @@ async function applyParamsToUrl() {
 
         tabInfoToSave.push({
           id: bundleId,
+          canDeleteFromPopup,
           checked: input.checked,
           urlParamKey,
           bundleName,
@@ -96,11 +119,17 @@ async function applyParamsToUrl() {
         payload: updatedUrl,
       });
 
+      const savedTabs = await sendMessage({
+        type: actions.GET_STORAGE,
+        payload: 'QueryParamsBuilderTab',
+      });
+
       await sendMessage({
         type: actions.SET_STORAGE,
         payload: {
           key: 'QueryParamsBuilderTab',
           value: {
+            ...savedTabs,
             [updatedTab.id]: tabInfoToSave,
           },
         },
@@ -111,9 +140,87 @@ async function applyParamsToUrl() {
   }
 }
 
-document
-  .getElementById('applyParams')
-  .addEventListener('click', applyParamsToUrl);
+async function appendNewItemToList(event) {
+  event.preventDefault();
 
-document.addEventListener('DOMContentLoaded', restoreOptions);
-chrome.storage.sync.get(null).then(console.log);
+  const { elements } = event.target;
+  const inputsValues = Array.from(elements)
+    .filter(elem => elem.nodeName === 'INPUT')
+    .reduce(
+      (prev, curr) => {
+        const value = curr.value;
+        curr.value = '';
+        return {
+          ...prev,
+          [curr.id]: value,
+        };
+      },
+      { checked: false, id: randomId(), canDeleteFromPopup: true }
+    );
+  popupOptionsBuilder([inputsValues]);
+
+  document
+    .querySelectorAll('.delete-new-item')
+    .forEach(item => item.addEventListener('click', deleteNewItem));
+
+  const currentTab = window.currentTab ?? {};
+  const tabInfoToSave = getCheckboxesValues();
+
+  try {
+    await sendMessage({
+      type: actions.SET_STORAGE,
+      payload: {
+        key: 'QueryParamsBuilderTab',
+        value: {
+          [currentTab.id]: tabInfoToSave,
+        },
+      },
+    });
+  } catch (error) {
+    console.error(
+      `QueryParamsBuilder extension appendNewItemToList`,
+      String(error)
+    );
+  }
+}
+
+async function deleteNewItem(event) {
+  try {
+    event.target.parentNode.parentNode.remove();
+    const currentTab = window.currentTab ?? {};
+    const tabInfoToSave = getCheckboxesValues();
+
+    await sendMessage({
+      type: actions.SET_STORAGE,
+      payload: {
+        key: 'QueryParamsBuilderTab',
+        value: {
+          [currentTab.id]: tabInfoToSave,
+        },
+      },
+    });
+  } catch (error) {
+    console.error(`QueryParamsBuilder extension deleteNewItem`, String(error));
+  }
+}
+
+function checkAllHandler(event) {
+  document
+    .querySelectorAll('tbody input[type="checkbox"]')
+    .forEach(elem => (elem.checked = event.target.checked));
+}
+
+if (document.readyState === 'interactive') {
+  document.addEventListener('DOMContentLoaded', restoreOptions);
+  document
+    .getElementById('applyParams')
+    .addEventListener('click', applyParamsToUrl);
+  document
+    .querySelector('.check-all')
+    .addEventListener('change', checkAllHandler);
+
+  document
+    .querySelector('form')
+    .addEventListener('submit', appendNewItemToList);
+  chrome.storage.sync.get(null).then(console.log).catch(console.error);
+}

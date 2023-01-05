@@ -8,12 +8,7 @@
       type="image/jpg"
       href="../../assets/icons/128x128.png"
     />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-      crossorigin="anonymous"
-    />
+    <link href="../../libs/bootstrap.min.css" rel="stylesheet" />
 
     <style>
       .container,
@@ -74,7 +69,7 @@
           />
         </div>
         <div class="col-sm-12 col-md-6">
-          <label for="urlParamKey" class="form-label">Url param value</label>
+          <label for="urlParamKey" class="form-label">Url param key</label>
           <input
             required
             type="text"
@@ -101,25 +96,14 @@
             <thead>
               <tr>
                 <th scope="col">Bundle Name</th>
-                <th scope="col">URL param value</th>
-                <th scope="col"></th>
+                <th scope="col">Url Param Key</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
         <div class="row save_options">
-          <div class="col-2">
-            <button
-              id="saveOptions"
-              style="width: 100%"
-              type="submit"
-              class="btn btn-primary"
-              disabled
-            >
-              Save Options
-            </button>
-          </div>
           <div class="col-2">
             <button id="removeAll" style="width: 100%" class="btn btn-danger">
               Delete All

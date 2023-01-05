@@ -64,3 +64,22 @@ onMessage((msg, sender, sendResponse) => {
     }
   }
 });
+
+function onCloseTabHandler(tabId) {
+  chrome.storage.sync.get('QueryParamsBuilderTab', function (data) {
+    const savedTabs = data['QueryParamsBuilderTab'];
+    const newTabs = Object.keys(savedTabs).reduce((prev, curr) => {
+      if (Number(curr) !== tabId) {
+        prev[curr] = savedTabs[curr];
+      }
+
+      return {
+        ...prev,
+      };
+    }, {});
+
+    chrome.storage.sync.set({ QueryParamsBuilderTab: newTabs });
+  });
+}
+
+chrome.tabs.onRemoved.addListener(onCloseTabHandler);

@@ -14,7 +14,7 @@ const { readFile, writeFile } = promises;
 const getFilesToMinify = function (dirPath, arrayOfFiles) {
   const files = fs.readdirSync(dirPath);
   const extensionsToExclude = new RegExp(
-    ['.png', '.min.js', '.map', '.json'].join('|')
+    ['.png', '.min.js', '.map', '.json', '.css'].join('|')
   );
   let innerArray = arrayOfFiles || [];
 
@@ -22,7 +22,7 @@ const getFilesToMinify = function (dirPath, arrayOfFiles) {
     const filePath = `${dirPath}/${file}`;
 
     if (fs.statSync(filePath).isDirectory()) {
-      innerArray = getFilesToMinify(dirPath + '/' + file, innerArray);
+      innerArray = getFilesToMinify(`${dirPath}/${file}`, innerArray);
     } else {
       if (!extensionsToExclude.test(filePath)) {
         innerArray.push(filePath);
