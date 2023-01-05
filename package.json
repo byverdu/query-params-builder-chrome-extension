@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "./build.sh",
+    "build": "pnpm run lint && ./build.sh",
     "lint": "eslint ./src/**/*.js"
   },
   "keywords": [],
