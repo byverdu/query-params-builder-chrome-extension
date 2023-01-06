@@ -14,9 +14,10 @@ function optionsTableRowBuilder(id, bundleName, urlParamKey) {
 
 /**
  * @param {import('../types/index.js').ExtensionOptions[]} optionsToBuild
- * @param {HTMLTableSectionElement} tbody
  */
-export function optionsToTableDefinitionBuilder(optionsToBuild, tbody) {
+export function optionsToTableDefinitionBuilder(optionsToBuild) {
+  const tbody = document.querySelector('.selected_bundles tbody');
+
   for (const option of optionsToBuild) {
     const tr = optionsTableRowBuilder(
       option.id,
@@ -171,6 +172,10 @@ export function castToBoolean(value) {
   }
 }
 
+/**
+ *
+ * @returns @param {import('../types/index.js').ExtensionOptions[]} optionsToBuild[]
+ */
 export function getCheckboxesValues() {
   const tabInfoToSave = [];
 

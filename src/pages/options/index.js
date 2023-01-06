@@ -24,11 +24,9 @@ async function restoreOptions() {
     });
 
     if (options && Array.isArray(options)) {
-      const tbody = document.querySelector('.selected_bundles tbody');
-
       globalOptions.push(...options);
 
-      optionsToTableDefinitionBuilder(globalOptions, tbody);
+      optionsToTableDefinitionBuilder(globalOptions);
 
       document
         .querySelectorAll('.delete-bundle')
