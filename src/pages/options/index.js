@@ -3,7 +3,12 @@ import {
   randomId,
   setToastContent,
 } from '../../utils/DOMHelpers.js';
-import { extensionApi, actions } from '../../utils/api.js';
+import {
+  extensionApi,
+  SET_STORAGE,
+  GET_STORAGE,
+  REMOVE_ALL_STORAGE,
+} from '../../utils/api.js';
 
 /**
  * @type {import('../../types/index.js').ExtensionOptions[]}
@@ -14,7 +19,7 @@ const { sendMessage } = extensionApi;
 async function restoreOptions() {
   try {
     const options = await sendMessage({
-      type: actions.GET_STORAGE,
+      type: GET_STORAGE,
       payload: 'QueryParamsBuilderOptions',
     });
 
@@ -90,7 +95,7 @@ async function addBundleToOptions(e) {
 
     try {
       await sendMessage({
-        type: actions.SET_STORAGE,
+        type: SET_STORAGE,
         payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
       });
 
@@ -115,7 +120,7 @@ async function deleteSavedParam(event) {
 
   try {
     const savedTabInfo = await sendMessage({
-      type: actions.GET_STORAGE,
+      type: GET_STORAGE,
       payload: 'QueryParamsBuilderTab',
     });
     const newTabValues = Object.keys(savedTabInfo).reduce((prev, curr) => {
@@ -128,11 +133,11 @@ async function deleteSavedParam(event) {
     }, {});
 
     await sendMessage({
-      type: actions.SET_STORAGE,
+      type: SET_STORAGE,
       payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
     });
     await sendMessage({
-      type: actions.SET_STORAGE,
+      type: SET_STORAGE,
       payload: { key: 'QueryParamsBuilderTab', value: newTabValues },
     });
 
@@ -169,7 +174,7 @@ async function editSavedParam(event) {
 
     try {
       const savedTabInfo = await sendMessage({
-        type: actions.GET_STORAGE,
+        type: GET_STORAGE,
         payload: 'QueryParamsBuilderTab',
       });
 
@@ -189,13 +194,13 @@ async function editSavedParam(event) {
         }, {});
 
         await sendMessage({
-          type: actions.SET_STORAGE,
+          type: SET_STORAGE,
           payload: { key: 'QueryParamsBuilderTab', value: newTabValues },
         });
       }
 
       await sendMessage({
-        type: actions.SET_STORAGE,
+        type: SET_STORAGE,
         payload: { key: 'QueryParamsBuilderOptions', value: globalOptions },
       });
 
@@ -214,11 +219,12 @@ async function editSavedParam(event) {
 async function removeAll() {
   try {
     await sendMessage({
-      type: actions.REMOVE_ALL_STORAGE,
+      type: REMOVE_ALL_STORAGE,
       payload: ['QueryParamsBuilderOptions', 'QueryParamsBuilderTab'],
     });
 
     document.querySelector('.selected_bundles tbody').textContent = '';
+    globalOptions.length = 0;
 
     setToastContent({
       toastType: 'success',
@@ -236,4 +242,3 @@ document
   .getElementById('addBundle')
   .addEventListener('click', addBundleToOptions);
 document.getElementById('removeAll').addEventListener('click', removeAll);
-chrome.storage.sync.get(null).then(console.log).catch(console.error);

@@ -1,4 +1,10 @@
-import { extensionApi, actions } from '../../utils/api.js';
+import {
+  extensionApi,
+  GET_CURRENT_TAB,
+  SET_STORAGE,
+  GET_STORAGE,
+  UPDATE_URL_TAB,
+} from '../../utils/api.js';
 import {
   popupOptionsBuilder,
   randomId,
@@ -8,7 +14,7 @@ import {
 
 const { sendMessage } = extensionApi;
 
-sendMessage({ type: actions.GET_CURRENT_TAB })
+sendMessage({ type: GET_CURRENT_TAB })
   .then(currentTab => {
     window.currentTab = currentTab;
   })
@@ -16,13 +22,13 @@ sendMessage({ type: actions.GET_CURRENT_TAB })
 
 async function restoreOptions() {
   try {
-    const currentTab = await sendMessage({ type: actions.GET_CURRENT_TAB });
+    const currentTab = await sendMessage({ type: GET_CURRENT_TAB });
     const savedTabInfo = await sendMessage({
-      type: actions.GET_STORAGE,
+      type: GET_STORAGE,
       payload: 'QueryParamsBuilderTab',
     });
     const options = await sendMessage({
-      type: actions.GET_STORAGE,
+      type: GET_STORAGE,
       payload: 'QueryParamsBuilderOptions',
     });
     const result = [];
@@ -115,17 +121,17 @@ async function applyParamsToUrl() {
           : initialUrl;
 
       const updatedTab = await sendMessage({
-        type: actions.UPDATE_URL_TAB,
+        type: UPDATE_URL_TAB,
         payload: updatedUrl,
       });
 
       const savedTabs = await sendMessage({
-        type: actions.GET_STORAGE,
+        type: GET_STORAGE,
         payload: 'QueryParamsBuilderTab',
       });
 
       await sendMessage({
-        type: actions.SET_STORAGE,
+        type: SET_STORAGE,
         payload: {
           key: 'QueryParamsBuilderTab',
           value: {
@@ -168,7 +174,7 @@ async function appendNewItemToList(event) {
 
   try {
     await sendMessage({
-      type: actions.SET_STORAGE,
+      type: SET_STORAGE,
       payload: {
         key: 'QueryParamsBuilderTab',
         value: {
@@ -207,7 +213,7 @@ async function deleteNewItem(event) {
     }
 
     await sendMessage({
-      type: actions.SET_STORAGE,
+      type: SET_STORAGE,
       payload: {
         key: 'QueryParamsBuilderTab',
         value: {
@@ -238,5 +244,4 @@ if (document.readyState === 'interactive') {
   document
     .querySelector('form')
     .addEventListener('submit', appendNewItemToList);
-  chrome.storage.sync.get(null).then(console.log).catch(console.error);
 }

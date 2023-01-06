@@ -21,7 +21,7 @@
   "web_accessible_resources": [
     {
       "matches": ["<all_urls>"],
-      "resources": ["./helpers/*.js", "./libs/bootstrap.min.js"]
+      "resources": ["./libs/bootstrap.min.js"]
     }
   ]
 }
