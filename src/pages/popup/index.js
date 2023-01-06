@@ -8,7 +8,6 @@ import {
 import {
   popupOptionsBuilder,
   randomId,
-  castToBoolean,
   getCheckboxesValues,
 } from '../../utils/DOMHelpers.js';
 
@@ -75,43 +74,18 @@ async function applyParamsToUrl() {
     const currentTab = window.currentTab ?? {};
     const { url: defaultUrl } = currentTab;
     const url = new URL(defaultUrl);
-    const urlParams = new URLSearchParams(url.search || '');
-    const tabInfoToSave = [];
 
     if (url) {
-      /**
-       * @type HTMLInputElement[]
-       */
-      const checkboxes = Array.from(
-        document.querySelectorAll('tbody input[type="checkbox"]')
-      );
+      const urlParams = new URLSearchParams(url.search || '');
+      const tabInfoToSave = getCheckboxesValues();
 
-      for (const input of checkboxes) {
+      for (const { urlParamKey, checked, urlParamValue } of tabInfoToSave) {
         // delete all to update only with checked ones
-        urlParams.delete(input.value);
+        urlParams.delete(urlParamKey);
 
-        const canDeleteFromPopup = castToBoolean(
-          input.dataset.canDeleteFromPopup
-        );
-        const bundleId = input.id;
-        const urlParamKey = input.value;
-        const urlParamValue = document.querySelector(
-          `[data-id="${bundleId}"]`
-        ).value;
-        const bundleName = input.dataset.bundleName;
-
-        if (input.checked) {
+        if (checked) {
           urlParams.append(urlParamKey, urlParamValue);
         }
-
-        tabInfoToSave.push({
-          id: bundleId,
-          canDeleteFromPopup,
-          checked: input.checked,
-          urlParamKey,
-          bundleName,
-          urlParamValue,
-        });
       }
 
       const initialUrl = `${url.origin}${url.pathname}`;
@@ -234,9 +208,11 @@ function checkAllHandler(event) {
 
 if (document.readyState === 'interactive') {
   document.addEventListener('DOMContentLoaded', restoreOptions);
+
   document
     .getElementById('applyParams')
     .addEventListener('click', applyParamsToUrl);
+
   document
     .querySelector('.check-all')
     .addEventListener('change', checkAllHandler);
