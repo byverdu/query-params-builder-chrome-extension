@@ -35,6 +35,7 @@ export function popupTableRowBuilder({
   checked,
   urlParamValue,
   canDeleteFromPopup,
+  withExtraThead,
 }) {
   return `
   <tr>
@@ -63,7 +64,8 @@ export function popupTableRowBuilder({
     ${
       (canDeleteFromPopup &&
         '<td><button class="btn btn-danger delete-new-item">-</button></td>') ||
-      '<td></td>'
+      (withExtraThead && '<td></td>') ||
+      ''
     }
   </tr>
 `;
@@ -77,6 +79,18 @@ export function popupOptionsBuilder(optionsToBuild) {
   table.style.visibility = 'visible';
   const tbody = table.querySelector('tbody');
   let tableRows = '';
+  const withExtraThead = optionsToBuild.some(
+    option => option.canDeleteFromPopup
+  );
+
+  if (withExtraThead && !document.getElementById('withExtraThead')) {
+    table
+      .querySelector('thead tr')
+      .insertAdjacentHTML(
+        'beforeend',
+        '<th id="withExtraThead" scope="col">Actions</th>'
+      );
+  }
 
   for (const {
     id,
@@ -93,11 +107,21 @@ export function popupOptionsBuilder(optionsToBuild) {
       checked,
       urlParamValue,
       canDeleteFromPopup,
+      withExtraThead,
     });
   }
 
   if (tbody) {
     tbody.insertAdjacentHTML('beforeend', tableRows);
+  }
+
+  if (optionsToBuild.length === 1 && withExtraThead) {
+    tbody.querySelectorAll('tr').forEach(elem => {
+      const withoutDeleteBtn = elem.querySelectorAll('td').length === 2;
+      if (withoutDeleteBtn) {
+        elem.insertAdjacentHTML('beforeend', '<td></td>');
+      }
+    });
   }
 }
 

@@ -187,8 +187,24 @@ async function appendNewItemToList(event) {
 async function deleteNewItem(event) {
   try {
     event.target.parentNode.parentNode.remove();
+    const idToRemove = event.target.closest('.td-checkbox')?.id;
     const currentTab = window.currentTab ?? {};
-    const tabInfoToSave = getCheckboxesValues();
+    const tabInfoToSave = getCheckboxesValues().filter(
+      item => item.id !== idToRemove
+    );
+    const withExtraThead = tabInfoToSave.some(
+      option => option.canDeleteFromPopup
+    );
+
+    if (!withExtraThead) {
+      document.querySelector('thead tr th:last-of-type').remove();
+      document.querySelectorAll('tbody tr').forEach(elem => {
+        const hasDeleteBtn = elem.querySelectorAll('td').length === 3;
+        if (hasDeleteBtn) {
+          elem.querySelector('td:last-of-type').remove();
+        }
+      });
+    }
 
     await sendMessage({
       type: actions.SET_STORAGE,

@@ -5,6 +5,7 @@
  * @property {string} id
  * @property {string} urlParamValue
  * @property {boolean} checked
+ * @property {boolean} canDeleteFromPopup
  */
 
 /**
