@@ -1,4 +1,11 @@
-import { extensionApi, actions } from '../utils/api.js';
+import {
+  extensionApi,
+  GET_CURRENT_TAB,
+  SET_STORAGE,
+  GET_STORAGE,
+  UPDATE_URL_TAB,
+  REMOVE_ALL_STORAGE,
+} from '../utils/api.js';
 
 const {
   onMessage,
@@ -37,29 +44,29 @@ async function removeStorageAsync(key) {
 
 onMessage((msg, sender, sendResponse) => {
   if (sender && msg && msg.type) {
-    if (msg.type === actions.SET_STORAGE) {
+    if (msg.type === SET_STORAGE) {
       setStorageAsync(msg.payload.key, msg.payload.value);
     }
 
-    if (msg.type === actions.GET_STORAGE) {
+    if (msg.type === GET_STORAGE) {
       getStorageAsync(sendResponse, msg.payload);
 
       return true;
     }
 
-    if (msg.type === actions.GET_CURRENT_TAB) {
+    if (msg.type === GET_CURRENT_TAB) {
       getCurrentTabAsync(sendResponse);
 
       return true;
     }
 
-    if (msg.type === actions.UPDATE_URL_TAB) {
+    if (msg.type === UPDATE_URL_TAB) {
       updateUrlTabAsync(sendResponse, msg.payload);
 
       return true;
     }
 
-    if (msg.type === actions.REMOVE_ALL_STORAGE) {
+    if (msg.type === REMOVE_ALL_STORAGE) {
       removeStorageAsync(msg.payload);
     }
   }
