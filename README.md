@@ -1,6 +1,6 @@
 # QueryParamsBuilder
 
-Do you need to check a website providing different url params for testing purposes? Then, this Chrome Extension might come handy to you. 
+Do you need to check a website providing different url params for testing purposes? Then, this Chrome Extension might come handy to you.
 
 QueryParamsBuilder will allow you to define `key/value` pairs of query params that you can apply to the url for every single browser tab.
 
@@ -10,7 +10,7 @@ The extension consists of two parts.
 
 In the options page you will define those params that will be available for all the tabs. In here you will set a description name and the key of the query string param.
 
-All fields are editable and changes are auto-saved once the field loses it's focus
+All fields are editable and changes are auto-saved once the field loses it's focus.
 
 You can also delete everything from this page.
 
