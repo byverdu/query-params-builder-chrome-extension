@@ -7,6 +7,7 @@ specifiers:
   '@types/node': ^18.11.10
   eslint: ^8.28.0
   html-minifier-terser: ^7.1.0
+  husky: ^8.0.3
   prettier: ^2.8.0
   terser: ^5.16.1
 
@@ -17,6 +18,7 @@ devDependencies:
   '@types/node': 18.11.10
   eslint: 8.28.0
   html-minifier-terser: 7.1.0
+  husky: 8.0.3
   prettier: 2.8.0
   terser: 5.16.1
 
@@ -525,6 +527,12 @@ packages:
       param-case: 3.0.4
       relateurl: 0.2.7
       terser: 5.16.1
+    dev: true
+
+  /husky/8.0.3:
+    resolution: {integrity: sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==}
+    engines: {node: '>=14'}
+    hasBin: true
     dev: true
 
   /ignore/5.2.0:

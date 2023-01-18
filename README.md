@@ -16,7 +16,7 @@ You can also delete everything from this page.
 
 ![Alt text](./docs/options-add-params.png "add param to options")
 
-## 1. Popup page
+## 2. Popup page
 
 A popup page will open once you click the extension's button on the browser extension's toolbar. For every single tab you will have by default all the options that you defined in the options page.
 
