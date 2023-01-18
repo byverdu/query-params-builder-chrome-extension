@@ -1,6 +1,6 @@
 {
   "name": "QueryParamsBuilder",
-  "description": "Append parameters to an url and keep common used saved",
+  "description": "Define key/value pairs of query params that you can apply to the url for every single tab.",
   "version": "1.0.0",
   "manifest_version": 3,
   "action": {
