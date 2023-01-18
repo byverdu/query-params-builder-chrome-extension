@@ -9,13 +9,18 @@ export const extensionApi = {
     await chrome.storage.sync.set({
       [key]: value,
     }),
+  setStorageSync: (key, value) =>
+    chrome.storage.sync.set({
+      [key]: value,
+    }),
   getStorage: async key => await chrome.storage.sync.get(key),
+  getStorageSync: (key, callback) => chrome.storage.sync.get(key, callback),
   sendMessage: async ({ type, payload }) =>
     await chrome.runtime.sendMessage({
       type,
       payload,
     }),
-
+  onRemovedTab: callback => chrome.tabs.onRemoved.addListener(callback),
   onMessage: callback => chrome.runtime.onMessage.addListener(callback),
   getCurrentTab: async () =>
     await chrome.tabs.query({ active: true, currentWindow: true }),

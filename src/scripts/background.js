@@ -14,6 +14,9 @@ const {
   getCurrentTab,
   updateUrlTab,
   removeStorage,
+  onRemovedTab,
+  getStorageSync,
+  setStorageSync,
 } = extensionApi;
 
 async function getStorageAsync(sendResponse, key) {
@@ -73,7 +76,7 @@ onMessage((msg, sender, sendResponse) => {
 });
 
 function onCloseTabHandler(tabId) {
-  chrome.storage.sync.get('QueryParamsBuilderTab', function (data) {
+  const callback = function (data) {
     const savedTabs = data['QueryParamsBuilderTab'];
     const newTabs = Object.keys(savedTabs).reduce((prev, curr) => {
       if (Number(curr) !== tabId) {
@@ -85,8 +88,9 @@ function onCloseTabHandler(tabId) {
       };
     }, {});
 
-    chrome.storage.sync.set({ QueryParamsBuilderTab: newTabs });
-  });
+    setStorageSync('QueryParamsBuilderTab', newTabs);
+  };
+  getStorageSync('QueryParamsBuilderTab', callback);
 }
 
-chrome.tabs.onRemoved.addListener(onCloseTabHandler);
+onRemovedTab(onCloseTabHandler);
