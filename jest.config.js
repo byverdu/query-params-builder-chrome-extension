@@ -4,6 +4,7 @@ const config = {
   transform: {
     '\\.[jt]sx?$': 'babel-jest',
   },
+  testEnvironment: 'jsdom',
 };
 
 export default config;
