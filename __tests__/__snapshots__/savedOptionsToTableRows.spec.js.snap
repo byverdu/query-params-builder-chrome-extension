@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`savedOptionsToTableRows should render the <tbody> 1`] = `
+"
+  <tr id="1234">
+  <td class="contentEditable" data-initial-value="api key" data-value-type="bundleName" contenteditable="true">
+    <span>api key</span>
+  </td>
+  <td class="contentEditable" data-initial-value="apiKey" data-value-type="urlParamKey" contenteditable="true">
+    <span>apiKey</span>
+  </td>
+  <td>
+    <button data-bundle-id="1234" class="btn btn-outline-danger delete-bundle">
+      Delete
+    </button>
+  </td>
+</tr>
+  
+  <tr id="5678">
+  <td class="contentEditable" data-initial-value="location" data-value-type="bundleName" contenteditable="true">
+    <span>location</span>
+  </td>
+  <td class="contentEditable" data-initial-value="geo" data-value-type="urlParamKey" contenteditable="true">
+    <span>geo</span>
+  </td>
+  <td>
+    <button data-bundle-id="5678" class="btn btn-outline-danger delete-bundle">
+      Delete
+    </button>
+  </td>
+</tr>
+  "
+`;

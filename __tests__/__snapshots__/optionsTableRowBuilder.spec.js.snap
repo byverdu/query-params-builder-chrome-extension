@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`optionsTableRowBuilder should render the <tr> 1`] = `
+"
+  <tr id="12345">
+  <td class="contentEditable" data-initial-value="api key" data-value-type="bundleName" contentEditable="true">
+    <span>api key</span>
+  </td>
+  <td class="contentEditable" data-initial-value="apiKey" data-value-type="urlParamKey" contentEditable="true">
+    <span>apiKey</span>
+  </td>
+  <td>
+    <button data-bundle-id="12345" class="btn btn-outline-danger delete-bundle">
+      Delete
+    </button>
+  </td>
+</tr>
+  "
+`;
