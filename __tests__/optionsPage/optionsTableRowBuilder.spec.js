@@ -1,4 +1,4 @@
-import { optionsTableRowBuilder } from '../src/utils/optionsPage/optionsTableRowBuilder';
+import { optionsTableRowBuilder } from '../../src/utils/optionsPage/optionsTableRowBuilder';
 
 describe('optionsTableRowBuilder', () => {
   it('should be defined', () => {

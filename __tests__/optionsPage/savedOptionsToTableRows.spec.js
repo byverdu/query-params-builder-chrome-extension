@@ -1,9 +1,9 @@
-import { readFileContent } from '../utils/readFileContent';
-import { savedOptionsToTableRows } from '../src/utils/optionsPage/savedOptionsToTableRows';
-import * as helper from '../src/utils/optionsPage/optionsTableRowBuilder';
+import { readFileContent } from '../../utils/readFileContent';
+import { savedOptionsToTableRows } from '../../src/utils/optionsPage/savedOptionsToTableRows';
+import * as helper from '../../src/utils/optionsPage/optionsTableRowBuilder';
 
 /**
-  @type import('../src/types/index.js').ExtensionOptions[]  
+  @type import('../../src/types/index.js').ExtensionOptions[]  
 */
 const savedOptions = [
   { id: '1234', urlParamKey: 'apiKey', bundleName: 'api key' },
@@ -45,5 +45,13 @@ describe('savedOptionsToTableRows', () => {
     const markup = document.querySelector('.selected_bundles tbody').innerHTML;
 
     expect(markup).toMatchSnapshot();
+  });
+
+  it('should throw and Error if <tbody> is not present', () => {
+    document.body.innerHTML = '';
+
+    expect(() => savedOptionsToTableRows(savedOptions)).toThrowError(
+      'No .selected_bundles tbody selector present on the document'
+    );
   });
 });

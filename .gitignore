@@ -3,3 +3,4 @@ dist
 queryParamsBuilderTab.zip
 .DS_Store
 .vscode
+coverage
