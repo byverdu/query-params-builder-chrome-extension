@@ -20,6 +20,14 @@ describe('savedOptionsToTableRows', () => {
     expect(savedOptionsToTableRows).toBeInstanceOf(Function);
   });
 
+  it('should throw and Error if <tbody> is not present', () => {
+    document.body.innerHTML = '';
+
+    expect(() => savedOptionsToTableRows(savedOptions)).toThrowError(
+      'No .selected_bundles tbody selector present on the document'
+    );
+  });
+
   it('should call optionsTableRowBuilder as many times as options saved', () => {
     jest.spyOn(helper, 'optionsTableRowBuilder');
 
@@ -45,13 +53,5 @@ describe('savedOptionsToTableRows', () => {
     const markup = document.querySelector('.selected_bundles tbody').innerHTML;
 
     expect(markup).toMatchSnapshot();
-  });
-
-  it('should throw and Error if <tbody> is not present', () => {
-    document.body.innerHTML = '';
-
-    expect(() => savedOptionsToTableRows(savedOptions)).toThrowError(
-      'No .selected_bundles tbody selector present on the document'
-    );
   });
 });
