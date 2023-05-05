@@ -88,13 +88,12 @@ export function popupOptionsBuilder(optionsToBuild) {
     option => option.canDeleteFromPopup
   );
 
-  if (withExtraThead && !document.getElementById('withExtraThead')) {
-    table
-      .querySelector('thead tr')
-      .insertAdjacentHTML(
-        'beforeend',
-        '<th id="withExtraThead" scope="col">Actions</th>'
-      );
+  if (withExtraThead) {
+    const elem = document.getElementById('withExtraThead');
+
+    if (elem) {
+      elem.style.display = 'block';
+    }
   }
 
   for (const {
