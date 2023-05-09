@@ -13,7 +13,9 @@ specifiers:
   html-minifier-terser: ^7.1.0
   husky: ^8.0.3
   jest: ^29.5.0
+  jest-chrome: github:byverdu/jest-chrome
   jest-environment-jsdom: ^29.5.0
+  jest-when: ^3.5.2
   prettier: ^2.8.0
   terser: ^5.16.1
 
@@ -30,7 +32,9 @@ devDependencies:
   html-minifier-terser: 7.1.0
   husky: 8.0.3
   jest: 29.5.0_@types+node@18.11.10
+  jest-chrome: github.com/byverdu/jest-chrome/71ebbfe0e2e94b27da2ffaaa8664509466b6b4e9
   jest-environment-jsdom: 29.5.0
+  jest-when: 3.5.2_jest@29.5.0
   prettier: 2.8.0
   terser: 5.16.1
 
@@ -1623,6 +1627,13 @@ packages:
       '@types/har-format': 1.2.9
     dev: true
 
+  /@types/chrome/0.0.235:
+    resolution: {integrity: sha512-SPj9A4E35SBJICjnL04KZEA/eVr8Km7gbnEfAxzaU2fHpLSnN64OPnfOR3EpDJXXpSORKTn3OUDwugw+rYBBXA==}
+    dependencies:
+      '@types/filesystem': 0.0.32
+      '@types/har-format': 1.2.9
+    dev: true
+
   /@types/eslint/8.4.10:
     resolution: {integrity: sha512-Sl/HOqN8NKPmhWo2VBEPm0nvHnu2LL3v9vKo8MEq0EtbJ4eVzGPl41VNPvn5E1i5poMk4/XD8UriLHpJvEP/Nw==}
     dependencies:
@@ -3172,6 +3183,14 @@ packages:
       string-length: 4.0.2
     dev: true
 
+  /jest-when/3.5.2_jest@29.5.0:
+    resolution: {integrity: sha512-4rDvnhaWh08RcPsoEVXgxRnUIE9wVIbZtGqZ5x2Wm9Ziz9aQs89PipQFmOK0ycbEhVAgiV3MUeTXp3Ar4s2FcQ==}
+    peerDependencies:
+      jest: '>= 25'
+    dependencies:
+      jest: 29.5.0_@types+node@18.11.10
+    dev: true
+
   /jest-worker/29.5.0:
     resolution: {integrity: sha512-NcrQnevGoSp4b5kg+akIpthoAFHxPBcb5P6mYPY0fUNT+sSvmtu6jlkEle3anczUKIKEbMxFimk9oTP/tpIPgA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -4193,4 +4212,12 @@ packages:
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+    dev: true
+
+  github.com/byverdu/jest-chrome/71ebbfe0e2e94b27da2ffaaa8664509466b6b4e9:
+    resolution: {tarball: https://codeload.github.com/byverdu/jest-chrome/tar.gz/71ebbfe0e2e94b27da2ffaaa8664509466b6b4e9}
+    name: jest-chrome
+    version: 0.8.0
+    dependencies:
+      '@types/chrome': 0.0.235
     dev: true

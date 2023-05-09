@@ -54,6 +54,7 @@ onMessage((msg, sender, sendResponse) => {
     if (msg.type === GET_STORAGE) {
       getStorageAsync(sendResponse, msg.payload);
 
+      // make it asynchronously by returning true
       return true;
     }
 

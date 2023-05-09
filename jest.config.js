@@ -6,14 +6,7 @@ const config = {
   },
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['(helpers.)js'],
-  // coverageThreshold: {
-  //   global: {
-  //     branches: 20,
-  //     functions: 30,
-  //     lines: 50,
-  //     statements: 50,
-  //   },
-  // },
+  setupFilesAfterEnv: ['./jest.setup.js'],
 };
 
 export default config;
