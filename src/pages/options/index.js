@@ -1,6 +1,6 @@
 import {
   optionsToTableDefinitionBuilder,
-  randomId,
+  // randomId,
   setToastContent,
 } from '../../utils/DOMHelpers.js';
 import {
@@ -9,6 +9,9 @@ import {
   GET_STORAGE,
   REMOVE_ALL_STORAGE,
 } from '../../utils/api.js';
+
+import { randomId } from '../../utils/randomId';
+import { savedOptionsToTableRows } from '../../utils/optionsPage/savedOptionsToTableRows.js';
 
 /**
  * @type {import('../../types/index.js').ExtensionOptions[]}
@@ -26,7 +29,7 @@ async function restoreOptions() {
     if (options && Array.isArray(options)) {
       globalOptions.push(...options);
 
-      optionsToTableDefinitionBuilder(globalOptions);
+      savedOptionsToTableRows(globalOptions);
 
       document
         .querySelectorAll('.delete-bundle')
@@ -80,7 +83,7 @@ async function addBundleToOptions(e) {
       canDeleteFromPopup: false,
     });
 
-    optionsToTableDefinitionBuilder(globalOptions, tbody);
+    savedOptionsToTableRows(globalOptions);
     bundleName.value = '';
     urlParamKey.value = '';
 

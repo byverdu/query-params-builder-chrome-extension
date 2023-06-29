@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`popupTableRowBuilder should render different <tr> if items are not checked 1`] = `
+"
+  <tr>
+    <td class="td-checkbox">
+      <input
+        class="form-check-input me-1"
+        type="checkbox"
+        value="apiKey"
+        data-url-param-key="apiKey"
+        data-bundle-name="api key"
+        id="123"
+        
+        data-can-delete-from-popup="false"
+      >
+      <label class="form-check-label" for="123">api key</label>
+    </td>
+    <td>
+      <input
+        type="text"
+        class="form-control"
+        data-id="123"
+        placeholder="apiKey value"
+        value="isASecret"
+      />
+    </td>
+    
+  </tr>
+"
+`;
+
+exports[`popupTableRowBuilder should render different <tr> if items can be deleted from popup 1`] = `
+"
+  <tr>
+    <td class="td-checkbox">
+      <input
+        class="form-check-input me-1"
+        type="checkbox"
+        value="apiKey"
+        data-url-param-key="apiKey"
+        data-bundle-name="api key"
+        id="123"
+        checked
+        data-can-delete-from-popup="true"
+      >
+      <label class="form-check-label" for="123">api key</label>
+    </td>
+    <td>
+      <input
+        type="text"
+        class="form-control"
+        data-id="123"
+        placeholder="apiKey value"
+        value="isASecret"
+      />
+    </td>
+    <td><button class="btn btn-danger delete-new-item">-</button></td>
+  </tr>
+"
+`;
+
+exports[`popupTableRowBuilder should render different <tr> if urlParamValue is not provided 1`] = `
+"
+  <tr>
+    <td class="td-checkbox">
+      <input
+        class="form-check-input me-1"
+        type="checkbox"
+        value="apiKey"
+        data-url-param-key="apiKey"
+        data-bundle-name="api key"
+        id="123"
+        checked
+        data-can-delete-from-popup="false"
+      >
+      <label class="form-check-label" for="123">api key</label>
+    </td>
+    <td>
+      <input
+        type="text"
+        class="form-control"
+        data-id="123"
+        placeholder="apiKey value"
+        value=""
+      />
+    </td>
+    
+  </tr>
+"
+`;
+
+exports[`popupTableRowBuilder should render the <tr> 1`] = `
+"
+  <tr>
+    <td class="td-checkbox">
+      <input
+        class="form-check-input me-1"
+        type="checkbox"
+        value="apiKey"
+        data-url-param-key="apiKey"
+        data-bundle-name="api key"
+        id="123"
+        checked
+        data-can-delete-from-popup="false"
+      >
+      <label class="form-check-label" for="123">api key</label>
+    </td>
+    <td>
+      <input
+        type="text"
+        class="form-control"
+        data-id="123"
+        placeholder="apiKey value"
+        value="isASecret"
+      />
+    </td>
+    
+  </tr>
+"
+`;
