@@ -1,17 +1,34 @@
-import path, {dirname} from 'path';
-import {fileURLToPath} from 'url';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import StylelintPlugin from 'stylelint-webpack-plugin';
 import ESLintPlugin from 'eslint-webpack-plugin';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const mode = process.env.MODE || 'development';
+const BASE_PATH_PAGES = 'src/pages';
 
 const config = {
-  entry: path.join(__dirname, 'src', 'index.jsx'),
+  entry: {
+    options: {
+      import: path.join(__dirname, `${BASE_PATH_PAGES}`, 'options/index.jsx'),
+      dependOn: 'shared',
+    },
+    popup: {
+      import: path.join(__dirname, `${BASE_PATH_PAGES}`, 'popup/index.jsx'),
+      dependOn: 'shared',
+    },
+    shared: ['react', 'react-dom'],
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
+    filename: '[name]/[name].js',
   },
-  mode: 'development',
+  optimization: {
+    runtimeChunk: 'single',
+  },
+  target: ['web', 'es13'],
+  mode,
   devtool: 'source-map',
   module: {
     rules: [
@@ -25,49 +42,27 @@ const config = {
           },
         },
       },
-      {
-        test: /\.s[ac]ss$/i,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                mode: 'local',
-                localIdentName: '[local]--[hash:base64:5]',
-                localIdentContext: path.resolve(__dirname, 'src'),
-                exportLocalsConvention: 'camelCase',
-              },
-            },
-          },
-          'sass-loader',
-        ],
-      },
     ],
   },
   plugins: [
-    new StylelintPlugin({
-      configFile: './.stylelintrc.json',
-      context: './src/**/*.scss',
-      fix: true,
+    new BundleAnalyzerPlugin({
+      ...(mode === 'production' ? { analyzerMode: 'static' } : {}),
     }),
     new ESLintPlugin({
       extensions: ['js', 'jsx'],
       fix: true,
     }),
     new HtmlWebpackPlugin({
-      meta: {
-        viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no',
-      },
+      template: `${BASE_PATH_PAGES}/options/index.html`,
       inject: 'body',
-      title: 'React Example',
-      templateContent: `
-      <html>
-        <body>
-          <div id="root">React did not compile</div>
-        </body>
-      </html>
-    `,
+      excludeChunks: ['popup'],
+      filename: 'options/index.html',
+    }),
+    new HtmlWebpackPlugin({
+      template: `${BASE_PATH_PAGES}/popup/index.html`,
+      inject: 'body',
+      excludeChunks: ['options'],
+      filename: 'popup/index.html',
     }),
   ],
 };

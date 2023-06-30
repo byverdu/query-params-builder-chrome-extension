@@ -1,4 +1,5 @@
 module.exports = {
+  plugins: ['react'],
   env: {
     browser: true,
     es2021: true,
@@ -8,7 +9,16 @@ module.exports = {
   globals: {
     bootstrap: true,
   },
-  extends: 'eslint:recommended',
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+  ],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',

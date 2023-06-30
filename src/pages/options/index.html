@@ -40,84 +40,8 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="row"><h1>QueryParamsBuilder Options</h1></div>
-      <div
-        id="optionsPageToast"
-        class="toast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <div class="toast-header">
-          <span class="badge me-auto"></span>
+    <div id="root"></div>
 
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="toast-body"></div>
-      </div>
-
-      <form class="row gy-3">
-        <div class="col-sm-12 col-md-6">
-          <label for="bundleName" class="form-label">Param Description</label>
-          <input
-            required
-            type="text"
-            class="form-control"
-            id="bundleName"
-            placeholder="i.e. API Key"
-          />
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <label for="urlParamKey" class="form-label">Url param key</label>
-          <input
-            required
-            type="text"
-            class="form-control"
-            id="urlParamKey"
-            placeholder="i.e. apiKey"
-          />
-        </div>
-        <div class="col-2">
-          <button
-            id="addBundle"
-            style="width: 100%"
-            type="submit"
-            class="btn btn-outline-primary"
-          >
-            Add Bundle
-          </button>
-        </div>
-      </form>
-
-      <div class="row selected_bundles">
-        <div id="selected_bundles">
-          <table class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th scope="col">Param Description</th>
-                <th scope="col">Url Param Key</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="row save_options">
-          <div class="col-2">
-            <button id="removeAll" style="width: 100%" class="btn btn-danger">
-              Delete All
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
     <script src="../../libs/bootstrap.min.js"></script>
-    <script type="module" src="./index.js"></script>
   </body>
 </html>
