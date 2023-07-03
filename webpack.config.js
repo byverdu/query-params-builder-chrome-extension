@@ -3,10 +3,11 @@ import { fileURLToPath } from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ESLintPlugin from 'eslint-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import FileManagerPlugin from 'filemanager-webpack-plugin';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const mode = process.env.MODE || 'development';
-const BASE_PATH_PAGES = 'src/pages';
+const BASE_PATH_PAGES = 'src/react/pages';
 
 const config = {
   entry: {
@@ -63,6 +64,13 @@ const config = {
       inject: 'body',
       excludeChunks: ['options'],
       filename: 'popup/index.html',
+    }),
+    new FileManagerPlugin({
+      events: {
+        onStart: {
+          copy: [{ source: 'src/extension', destination: 'dist' }],
+        },
+      },
     }),
   ],
 };

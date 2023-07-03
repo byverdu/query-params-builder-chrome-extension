@@ -1,4 +1,4 @@
-import { castToBoolean } from '../src/utils/castToBoolean';
+import { castToBoolean } from '../src/extension/utils/castToBoolean';
 
 describe('castToBoolean', () => {
   it('should be defined', () => {

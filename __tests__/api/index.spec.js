@@ -1,5 +1,5 @@
 import { when } from 'jest-when';
-import { extensionApi, SET_STORAGE } from '../../src/utils/api';
+import { extensionApi, SET_STORAGE } from '../../src/extension/utils/api';
 
 const {
   setStorage,
