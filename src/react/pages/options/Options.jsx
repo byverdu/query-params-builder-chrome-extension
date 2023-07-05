@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
-import { Form } from '../../components/Form.jsx';
+import { OptionsForm } from '../../components/OptionsForm.jsx';
 import { Toast } from '../../components/Toast.jsx';
-import { TableBody } from '../../components/OptionsTableBody.jsx';
-import { AppContext } from './index.jsx';
+import { OptionsTableBody } from '../../components/OptionsTableBody.jsx';
+import { OptionContext } from './index.jsx';
 
 export const Options = () => {
-  const { updateOptions } = useContext(AppContext);
+  const { updateOptions } = useContext(OptionContext);
 
   return (
     <>
@@ -14,7 +14,7 @@ export const Options = () => {
           <h1>QueryParamsBuilder Options</h1>
         </div>
         <Toast />
-        <Form />
+        <OptionsForm />
         <div className="row selected_bundles">
           <div id="selected_bundles">
             <table className="table table-striped table-bordered">
@@ -26,7 +26,7 @@ export const Options = () => {
                 </tr>
               </thead>
               <tbody>
-                <TableBody />
+                <OptionsTableBody />
               </tbody>
             </table>
           </div>

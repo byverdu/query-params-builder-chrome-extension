@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { AppContext } from '../pages/options/index.jsx';
+import { OptionContext } from '../pages/options/index.jsx';
 
-export const TableBody = () => {
-  const { setToast, updateOptions, options } = useContext(AppContext);
+export const OptionsTableBody = () => {
+  const { setToast, updateOptions, options } = useContext(OptionContext);
 
   const editHandler = e => {
     const id = e.target.parentElement.id;

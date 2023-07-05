@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from 'react';
-import { AppContext } from '../pages/options/index.jsx';
+import { OptionContext } from '../pages/options/index.jsx';
 
 const inputs = [
   {
@@ -10,8 +10,8 @@ const inputs = [
   { id: 'urlParamKey', placeholder: 'i.e. apiKey', text: 'Url param key' },
 ];
 
-export const Form = () => {
-  const { updateOptions, options } = useContext(AppContext);
+export const OptionsForm = () => {
+  const { updateOptions, options } = useContext(OptionContext);
   const onSubmitHandler = useCallback(
     e => {
       e.preventDefault();

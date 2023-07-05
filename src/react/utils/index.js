@@ -1,8 +1,12 @@
 /**
- *
- * @param {React.Dispatch<React.SetStateAction<import('../../extension/types/index.js').Toast>>} setToast
+ * @type {API}
+ */
+const { sendMessage } = extensionApi;
+
+/**
+ * @param {React.Dispatch<React.SetStateAction<Toast>>} setToast
  * @param {Error} error
- * @param {string} type
+ * @param {UpdateActions | ExtensionActions} type
  */
 const sendMessageCatchHandler = (setToast, error, type) => {
   console.error(`QueryParamsBuilder extension ${type}`, String(error));

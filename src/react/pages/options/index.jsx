@@ -1,6 +1,10 @@
-/* eslint-disable react/prop-types */
-import React, { createContext, useState, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import { createRoot } from 'react-dom/client';
 import { Options } from './Options.jsx';
 
@@ -15,17 +19,20 @@ import {
 import { sendMessageCatchHandler } from '../../utils/index.js';
 
 /**
- * @type {import('../../../extension/types/index.js').API}
+ * @type {API}
  */
 const { sendMessage } = extensionApi;
 
+/**
+ * @type {Toast}
+ */
 const initialToast = {
   type: undefined,
   text: undefined,
 };
 
 /**
- * @type {import('../../../extension/types/index.js').OptionsContext}
+ * @type {OptionsContext}
  */
 const initialContext = {
   toast: {
@@ -37,51 +44,65 @@ const initialContext = {
   updateOptions: () => {},
 };
 
-export const AppContext = createContext(initialContext);
+export const OptionContext = createContext(initialContext);
 
 const AppProvider = ({ children }) => {
+  /**
+   * @type {UseState<Toast>}
+   */
   const [toast, setToast] = useState(initialToast);
+  /**
+   * @type {UseState<ExtensionProps[]>}
+   */
   const [options, setOptions] = useState([]);
   const optionsToFetch = useRef(true);
-  /**
-   * @type {import('../../../extension/types/index.js').UpdateOptionsParams}
-   */
-  const updateOptions = (value, actionType) => {
-    const toastText = {
-      saveNewOption: 'New option saved Successfully',
-      updateOption: 'Option updated Successfully',
-      deleteOption: 'Option deleted Successfully',
-      deleteAll: 'All options deleted Successfully',
-    }[actionType];
 
-    if (actionType === 'deleteAll') {
+  /**
+   * @type {OptionsContext['updateOptions']}
+   */
+  const updateOptions = useCallback(
+    (value, actionType) => {
+      /**
+       * @type {{[key in UpdateActions]: string}}
+       */
+      const toastText = {
+        saveNewOption: 'New option saved Successfully',
+        updateOption: 'Option updated Successfully',
+        deleteOption: 'Option deleted Successfully',
+        deleteAll: 'All options deleted Successfully',
+      };
+      const text = toastText[actionType];
+
+      if (actionType === 'deleteAll') {
+        sendMessage({
+          type: REMOVE_ALL_STORAGE,
+          payload: { value: [OPTIONS_ITEM, TABS_ITEM] },
+        })
+          .then(() => {
+            setToast({ type: 'success', text });
+          })
+          .catch(error => sendMessageCatchHandler(setToast, error, actionType));
+      }
+
       sendMessage({
-        type: REMOVE_ALL_STORAGE,
-        payload: { value: [OPTIONS_ITEM, TABS_ITEM] },
+        type: SET_STORAGE,
+        payload: { key: OPTIONS_ITEM, value },
       })
         .then(() => {
-          setToast({ type: 'success', text: toastText });
+          setOptions(value);
+          setToast({ type: 'success', text });
         })
         .catch(error => sendMessageCatchHandler(setToast, error, actionType));
-    }
-
-    sendMessage({
-      type: SET_STORAGE,
-      payload: { key: OPTIONS_ITEM, value },
-    })
-      .then(() => {
-        setOptions(value);
-        setToast({ type: 'success', text: toastText });
-      })
-      .catch(error => sendMessageCatchHandler(setToast, error, actionType));
-  };
+    },
+    [setToast, setOptions]
+  );
 
   useEffect(() => {
     if (optionsToFetch.current) {
       sendMessage({
         type: GET_STORAGE,
         payload: {
-          key: OPTIONS_ITEM,
+          value: OPTIONS_ITEM,
         },
       })
         .then(resp => {
@@ -98,7 +119,7 @@ const AppProvider = ({ children }) => {
   }, []);
 
   return (
-    <AppContext.Provider
+    <OptionContext.Provider
       value={{
         toast,
         setToast,
@@ -108,7 +129,7 @@ const AppProvider = ({ children }) => {
       }}
     >
       {children}
-    </AppContext.Provider>
+    </OptionContext.Provider>
   );
 };
 
@@ -117,7 +138,3 @@ createRoot(document.getElementById('root')).render(
     <Options />
   </AppProvider>
 );
-
-// AppProvider.propTypes = {
-//   children: PropTypes.element.isRequired,
-// };

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useContext } from 'react';
-import { AppContext } from '../pages/options/index.jsx';
+import { OptionContext } from '../pages/options/index.jsx';
 
 export const Toast = () => {
   const toast = useRef(null);
   const {
     toast: { type, text },
     options,
-  } = useContext(AppContext);
+  } = useContext(OptionContext);
   const headerText = {
     success: 'Success!',
     danger: 'Error!',

@@ -5,6 +5,7 @@ module.exports = {
     es2021: true,
     webextensions: true,
     jest: true,
+    node: true,
   },
   globals: {
     bootstrap: true,
@@ -27,5 +28,6 @@ module.exports = {
   rules: {
     'linebreak-style': ['error', 'unix'],
     semi: ['error', 'always'],
+    'react/prop-types': 0,
   },
 };
