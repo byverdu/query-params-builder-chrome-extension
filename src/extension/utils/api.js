@@ -7,7 +7,7 @@ export const UPDATE_URL_TAB = 'UPDATE_URL_TAB';
 export const REMOVE_ALL_STORAGE = 'REMOVE_ALL_STORAGE';
 
 /**
- * @type {import('../types/index.js').API}
+ * @type {API}
  */
 export const extensionApi = {
   setStorage: async (key, value) =>

@@ -21,21 +21,21 @@ const {
 } = extensionApi;
 
 /**
- * @param {(response: import('../types/index.js').ExtensionOptions[]) => void} sendResponse
- * @param {import('../types/index.js').ExtensionItems} key
+ * @param {ExtensionItems} key
+ * @param {SetStorage} values
+ */
+async function setStorageAsync(key, values) {
+  await setStorage(key, values);
+}
+
+/**
+ * @param {(response: ExtensionProps[]) => void} sendResponse
+ * @param {ExtensionItems} key
  */
 async function getStorageAsync(sendResponse, key) {
   const items = await getStorage(key);
 
   sendResponse(items[key]);
-}
-
-/**
- * @param {import('../types/index.js').ExtensionItems} key
- * @param {import('../types/index.js').ExtensionOptions[]} values
- */
-async function setStorageAsync(key, values) {
-  await setStorage(key, values);
 }
 
 /**
@@ -58,7 +58,7 @@ async function updateUrlTabAsync(sendResponse, url) {
 }
 
 /**
- * @param {import('../types/index.js').ExtensionItems} key
+ * @param {ExtensionItems[]} key
  */
 async function removeStorageAsync(key) {
   await removeStorage(key);
@@ -67,11 +67,19 @@ async function removeStorageAsync(key) {
 onMessage((msg, sender, sendResponse) => {
   if (sender && msg && msg.type) {
     if (msg.type === SET_STORAGE) {
-      setStorageAsync(msg.payload.key, msg.payload.value);
+      /**
+       * @type {SendMsgPayload<SetStorage>}
+       */
+      const { key, value } = msg.payload;
+      setStorageAsync(key, value);
     }
 
     if (msg.type === GET_STORAGE) {
-      getStorageAsync(sendResponse, msg.payload.key);
+      /**
+       * @type {SendMsgPayload<ExtensionItems>}
+       */
+      const { value } = msg.payload;
+      getStorageAsync(sendResponse, value);
 
       // make it asynchronously by returning true
       return true;
@@ -84,13 +92,21 @@ onMessage((msg, sender, sendResponse) => {
     }
 
     if (msg.type === UPDATE_URL_TAB) {
-      updateUrlTabAsync(sendResponse, msg.payload.value);
+      /**
+       * @type {SendMsgPayload<string>}
+       */
+      const { value } = msg.payload;
+      updateUrlTabAsync(sendResponse, value);
 
       return true;
     }
 
     if (msg.type === REMOVE_ALL_STORAGE) {
-      removeStorageAsync(msg.payload.value);
+      /**
+       * @type {SendMsgPayload<ExtensionItems[]>}
+       */
+      const { value } = msg.payload;
+      removeStorageAsync(value);
     }
   }
 });
@@ -99,6 +115,9 @@ onMessage((msg, sender, sendResponse) => {
  * @param {number} tabId
  */
 function onCloseTabHandler(tabId) {
+  /**
+   * @type {GetStorageSyncCallback}
+   */
   const callback = function (data) {
     const savedTabs = data[TABS_ITEM];
     const newTabs = Object.keys(savedTabs).reduce((prev, curr) => {

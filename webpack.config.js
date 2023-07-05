@@ -70,6 +70,9 @@ const config = {
         onStart: {
           copy: [{ source: 'src/extension', destination: 'dist' }],
         },
+        onEnd: {
+          delete: ['dist/types.js', 'dist/report.html'],
+        },
       },
     }),
   ],
