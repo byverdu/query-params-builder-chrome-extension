@@ -44,14 +44,14 @@ interface SendMsgParams {
 
 type OptionsValue = ExtensionProps[];
 type TabsValue = { [key: string]: ExtensionProps[] };
-type SetStorage = OptionsValue | TabsValue;
+type SyncStorage = OptionsValue | TabsValue;
 
 interface API {
-  setStorage: (key: ExtensionItems, value: SetStorage) => Promise<void>;
-  setStorageSync: (key: ExtensionItems, value: SetStorage) => void;
+  setStorage: (key: ExtensionItems, value: SyncStorage) => Promise<void>;
+  setStorageSync: (key: ExtensionItems, value: SyncStorage) => void;
   getStorage: (
     key: ExtensionItems
-  ) => Promise<{ [key in ExtensionItems]: ExtensionProps[] }>;
+  ) => Promise<{ [key in ExtensionItems]?: SyncStorage }>;
   getStorageSync: (
     key: ExtensionItems,
     callback: GetStorageSyncCallback

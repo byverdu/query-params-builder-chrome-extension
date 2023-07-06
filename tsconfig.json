@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "baseUrl": "./src",
-    "typeRoots": ["src/types/index.d.ts"],
-    "types": ["node", "jest", "chrome", "react"],
-  },
-  "include": ["src/types/index.d.ts"]
-}

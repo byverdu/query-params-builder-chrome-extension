@@ -1,3 +1,4 @@
+/// <reference path="../../types/index.d.ts" />
 import {
   extensionApi,
   GET_CURRENT_TAB,
@@ -6,6 +7,7 @@ import {
   UPDATE_URL_TAB,
   REMOVE_ALL_STORAGE,
   TABS_ITEM,
+  OPTIONS_ITEM,
 } from '../utils/api.js';
 
 const {
@@ -22,14 +24,14 @@ const {
 
 /**
  * @param {ExtensionItems} key
- * @param {SetStorage} values
+ * @param {SyncStorage} values
  */
 async function setStorageAsync(key, values) {
   await setStorage(key, values);
 }
 
 /**
- * @param {(response: ExtensionProps[]) => void} sendResponse
+ * @param {(response: SyncStorage) => void} sendResponse
  * @param {ExtensionItems} key
  */
 async function getStorageAsync(sendResponse, key) {
@@ -64,11 +66,18 @@ async function removeStorageAsync(key) {
   await removeStorage(key);
 }
 
-onMessage((msg, sender, sendResponse) => {
+/**
+ *
+ * @param {SendMsgParams} msg
+ * @param {chrome.runtime.MessageSender} sender
+ * @param {(response: unknown) => void} sendResponse
+ * @returns void
+ */
+function onMessageCallback(msg, sender, sendResponse) {
   if (sender && msg && msg.type) {
     if (msg.type === SET_STORAGE) {
       /**
-       * @type {SendMsgPayload<SetStorage>}
+       * @type {SendMsgPayload<SyncStorage>}
        */
       const { key, value } = msg.payload;
       setStorageAsync(key, value);
@@ -108,18 +117,19 @@ onMessage((msg, sender, sendResponse) => {
       const { value } = msg.payload;
       removeStorageAsync(value);
     }
+  } else {
+    console.info(`No messages found for ${OPTIONS_ITEM}`);
   }
-});
+}
 
 /**
+ * @param {SyncStorage} data
  * @param {number} tabId
  */
-function onCloseTabHandler(tabId) {
-  /**
-   * @type {GetStorageSyncCallback}
-   */
-  const callback = function (data) {
-    const savedTabs = data[TABS_ITEM];
+function setStorageSyncCallback(data, tabId) {
+  const savedTabs = data[TABS_ITEM];
+
+  if (savedTabs) {
     const newTabs = Object.keys(savedTabs).reduce((prev, curr) => {
       if (Number(curr) !== tabId) {
         prev[curr] = savedTabs[curr];
@@ -131,8 +141,15 @@ function onCloseTabHandler(tabId) {
     }, {});
 
     setStorageSync(TABS_ITEM, newTabs);
-  };
-  getStorageSync(TABS_ITEM, callback);
+  }
 }
 
-onRemovedTab(onCloseTabHandler);
+/**
+ * @param {number} tabId
+ */
+function onRemovedTabHandler(tabId) {
+  getStorageSync(TABS_ITEM, data => setStorageSyncCallback(data, tabId));
+}
+
+onMessage(onMessageCallback);
+onRemovedTab(onRemovedTabHandler);

@@ -1,3 +1,5 @@
+/// <reference path="../../types/index.d.ts" />
+
 export const OPTIONS_ITEM = 'QueryParamsBuilderOptions';
 export const TABS_ITEM = 'QueryParamsBuilderTab';
 export const GET_STORAGE = 'GET_STORAGE';
