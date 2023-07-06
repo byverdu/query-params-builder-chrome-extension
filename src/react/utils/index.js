@@ -1,3 +1,12 @@
+/// <reference path="../../types/index.d.ts" />
+
+import {
+  extensionApi,
+  GET_STORAGE,
+  OPTIONS_ITEM,
+  TABS_ITEM,
+} from '../../extension/utils/api.js';
+
 /**
  * @type {API}
  */
@@ -13,4 +22,46 @@ const sendMessageCatchHandler = (setToast, error, type) => {
   setToast({ type: 'danger', text: error.message });
 };
 
-export { sendMessageCatchHandler };
+/**
+ *
+ * @param {string} tabUrl
+ * @returns {Promise<ExtensionProps[]>}
+ */
+const fetchTabStorage = async tabUrl => {
+  // const tabUrl = currentTab && currentTab.url;
+  /**
+   * @type {{[key: string]: ExtensionProps[]}}
+   */
+  const tabs = await sendMessage({
+    type: GET_STORAGE,
+    payload: { key: TABS_ITEM },
+  });
+
+  /**
+   * @type {ExtensionProps[]}
+   */
+  const options = await sendMessage({
+    type: GET_STORAGE,
+    payload: { key: OPTIONS_ITEM },
+  });
+
+  const validOptions = options && Array.isArray(options) ? options : [];
+  const savedTabInfo = tabs && tabs[tabUrl];
+
+  if (!savedTabInfo) {
+    return validOptions;
+  }
+
+  const validTabsInfo =
+    savedTabInfo && Array.isArray(savedTabInfo) ? savedTabInfo : [];
+
+  for (const option of validOptions) {
+    if (!validTabsInfo.find(item => item.id === option.id)) {
+      validTabsInfo.push(option);
+    }
+  }
+
+  return validTabsInfo;
+};
+
+export { sendMessageCatchHandler, fetchTabStorage };
