@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { OptionContext } from '../pages/options/index.jsx';
+import { OptionContext } from '../pages/options/context.jsx';
 
 export const OptionsTableBody = () => {
-  const { setToast, updateOptions, options } = useContext(OptionContext);
+  const { updateOptions, options } = useContext(OptionContext);
 
   const editHandler = e => {
     const id = e.target.parentElement.id;
@@ -21,10 +21,17 @@ export const OptionsTableBody = () => {
   const deleteHandler = id => {
     const newOptions = options.filter(item => item.id !== id);
 
-    setToast({ type: 'danger', text: 'Option deleted!' });
-
     updateOptions(newOptions, 'deleteOption');
   };
+
+  if (!options.length) {
+    return (
+      <tr>
+        <td colSpan={3}>Add some bundles!</td>
+      </tr>
+    );
+  }
+
   return (
     <>
       {options.map(({ id, bundleName, urlParamKey }) => (
@@ -33,7 +40,6 @@ export const OptionsTableBody = () => {
             suppressContentEditableWarning
             onBlur={editHandler}
             className="contentEditable"
-            data-initial-value={bundleName}
             data-value-type="bundleName"
             contentEditable="true"
           >
@@ -43,7 +49,6 @@ export const OptionsTableBody = () => {
             suppressContentEditableWarning
             onBlur={editHandler}
             className="contentEditable"
-            data-initial-value={urlParamKey}
             data-value-type="urlParamKey"
             contentEditable="true"
           >
