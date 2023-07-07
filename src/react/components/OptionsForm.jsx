@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from 'react';
-import { OptionContext } from '../pages/options/index.jsx';
+import { OptionContext } from '../pages/options/context.jsx';
 
 const inputs = [
   {

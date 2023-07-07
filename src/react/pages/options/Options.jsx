@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { OptionsForm } from '../../components/OptionsForm.jsx';
 import { Toast } from '../../components/Toast.jsx';
 import { OptionsTableBody } from '../../components/OptionsTableBody.jsx';
-import { OptionContext } from './index.jsx';
+import { OptionContext } from './context.jsx';
 
 export const Options = () => {
   const { updateOptions } = useContext(OptionContext);

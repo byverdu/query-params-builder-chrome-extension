@@ -2,6 +2,7 @@
 const config = {
   collectCoverageFrom: [
     'src/**/*.js',
+    'src/**/*.jsx',
     '!src/extension/libs/*.js',
     '!src/extension/types/*.js',
   ],
@@ -9,7 +10,7 @@ const config = {
     '\\.[jt]sx?$': 'babel-jest',
   },
   testEnvironment: 'jsdom',
-  testPathIgnorePatterns: ['(helpers.)js'],
+  testRegex: '__tests__/.*\\.spec\\.(jsx)$',
   setupFilesAfterEnv: ['./jest.setup.js'],
 };
 
