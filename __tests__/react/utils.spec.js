@@ -9,19 +9,17 @@ jest.mock('../../src/extension/utils/api.js');
 
 const setToast = jest.fn();
 /**
- * @type {ExtensionProps}
+ * @type {BaseExtensionProps}
  */
 const optionsItem = {
-  url: 'someUrl',
   urlParamKey: 'apiKey',
-  urlParamValue: 'someSecret',
   bundleName: 'API key',
   canDeleteFromPopup: false,
   checked: false,
   id: 'someId',
 };
 /**
- * @type {ExtensionProps}
+ * @type {OptionsExtensionProps}
  */
 const tabsItem = {
   url: 'someUrl',

@@ -25,12 +25,12 @@ const sendMessageCatchHandler = (setToast, error, type) => {
 /**
  *
  * @param {string} tabUrl
- * @returns {Promise<ExtensionProps[]>}
+ * @returns {Promise<OptionsExtensionProps[] | BaseExtensionProps[]>}
  */
 const fetchTabStorage = async tabUrl => {
   // const tabUrl = currentTab && currentTab.url;
   /**
-   * @type {{[key: string]: ExtensionProps[]}}
+   * @type {{[key: string]: OptionsExtensionProps[]}}
    */
   const tabs = await sendMessage({
     type: GET_STORAGE,
@@ -38,7 +38,7 @@ const fetchTabStorage = async tabUrl => {
   });
 
   /**
-   * @type {ExtensionProps[]}
+   * @type {BaseExtensionProps[]}
    */
   const options = await sendMessage({
     type: GET_STORAGE,

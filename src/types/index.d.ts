@@ -1,11 +1,14 @@
-interface ExtensionProps {
+interface BaseExtensionProps {
   bundleName: string;
   urlParamKey: string;
   id: string;
-  url: string;
-  urlParamValue: string;
   checked: boolean;
   canDeleteFromPopup: boolean;
+}
+
+interface OptionsExtensionProps extends BaseExtensionProps {
+  url: string;
+  urlParamValue: string;
 }
 
 type ExtensionItems = 'QueryParamsBuilderOptions' | 'QueryParamsBuilderTab';
@@ -18,7 +21,7 @@ type ExtensionActions =
   | 'REMOVE_ALL_STORAGE';
 
 type GetStorageSyncCallback = (items: {
-  [key in ExtensionItems]: ExtensionProps[];
+  [key in ExtensionItems]: OptionsExtensionProps[] | BaseExtensionProps[];
 }) => void;
 
 type OnRemoveTabCallback = (
@@ -42,8 +45,8 @@ interface SendMsgParams {
   payload?: SendMsgPayload<any>;
 }
 
-type OptionsValue = ExtensionProps[];
-type TabsValue = { [key: string]: ExtensionProps[] };
+type OptionsValue = BaseExtensionProps[];
+type TabsValue = { [key: string]: OptionsExtensionProps[] };
 type SyncStorage = OptionsValue | TabsValue;
 
 interface API {
@@ -77,19 +80,19 @@ type UpdateActions =
 
 type UseState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
-type UpdateOptionsPopup = (options: ExtensionProps[]) => void;
+type UpdateOptionsPopup = (options: BaseExtensionProps[]) => void;
 
 interface OptionsContext {
   toast: Toast;
-  options: ExtensionProps[];
-  setOptions: React.Dispatch<React.SetStateAction<ExtensionProps[]>>;
+  options: BaseExtensionProps[];
+  setOptions: React.Dispatch<React.SetStateAction<BaseExtensionProps[]>>;
   setToast: React.Dispatch<React.SetStateAction<Toast>>;
-  updateOptions: (options: ExtensionProps[], type: UpdateActions) => void;
+  updateOptions: (options: BaseExtensionProps[], type: UpdateActions) => void;
 }
 
 interface PopupContext {
   currentTab: chrome.tabs.Tab;
   setCurrentTab: React.Dispatch<React.SetStateAction<chrome.tabs.Tab>>;
-  options: ExtensionProps[];
-  setOptions: React.Dispatch<React.SetStateAction<ExtensionProps[]>>;
+  options: OptionsExtensionProps[];
+  setOptions: React.Dispatch<React.SetStateAction<OptionsExtensionProps[]>>;
 }
