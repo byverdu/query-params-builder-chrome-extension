@@ -10,7 +10,7 @@ const config = {
     '\\.[jt]sx?$': 'babel-jest',
   },
   testEnvironment: 'jsdom',
-  testRegex: '__tests__/.*\\.spec\\.(jsx)$',
+  testRegex: '__tests__/.*\\.spec\\.(jsx?|js)$',
   setupFilesAfterEnv: ['./jest.setup.js'],
 };
 

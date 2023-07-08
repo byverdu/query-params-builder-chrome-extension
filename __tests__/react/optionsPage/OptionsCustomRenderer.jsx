@@ -6,7 +6,6 @@ import { OptionContext } from '../../../src/react/pages/options/context.jsx';
  * @param {{component: () => React.JSX.Element,mockedProps?: OptionsContext}} props
  * @returns {Element}
  */
-
 export const renderer = ({ mockedProps, component }) => {
   const child = component();
 
@@ -20,3 +19,9 @@ export const renderer = ({ mockedProps, component }) => {
 
   return container;
 };
+
+export const OptionsCustomRenderer = ({ children, mockedProps }) => (
+  <OptionContext.Provider value={{ ...mockedProps }}>
+    {children}
+  </OptionContext.Provider>
+);
