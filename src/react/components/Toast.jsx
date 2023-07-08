@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useContext } from 'react';
-import { OptionContext } from '../pages/options/index.jsx';
+import { OptionContext } from '../pages/options/context.jsx';
 
 export const Toast = () => {
+  /**
+   * @type {React.MutableRefObject<HTMLDivElement | null>}
+   */
   const toast = useRef(null);
   const {
     toast: { type, text },
@@ -14,11 +17,11 @@ export const Toast = () => {
 
   useEffect(() => {
     if (toast.current && type && text) {
-      new bootstrap.Toast(toast.current, {
-        animation: true,
-        autohide: true,
-        delay: 3000,
-      }).show();
+      toast.current.classList.add('show');
+
+      setTimeout(() => {
+        toast.current.classList.remove('show');
+      }, 3000);
     }
   }, [type, text, options]);
 

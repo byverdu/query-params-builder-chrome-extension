@@ -1,26 +1,22 @@
 import '@testing-library/jest-dom';
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { OptionsForm } from '../../../src/react/components/OptionsForm';
-import CustomRenderer from './OptionsCustomRenderer';
+import { renderer } from './OptionsCustomRenderer';
 
 describe('OptionsForm', () => {
   it('should render a form', () => {
-    const { container } = render(
-      <CustomRenderer>
-        <OptionsForm />
-      </CustomRenderer>
-    );
+    const container = renderer({
+      component: () => <OptionsForm />,
+    });
 
     expect(container.querySelector('form')).toBeInTheDocument();
   });
 
   it('should render 2 inputs', () => {
-    const { container } = render(
-      <CustomRenderer>
-        <OptionsForm />
-      </CustomRenderer>
-    );
+    const container = renderer({
+      component: () => <OptionsForm />,
+    });
     const inputs = container.querySelectorAll('input');
 
     expect(inputs).toHaveLength(2);
@@ -29,11 +25,9 @@ describe('OptionsForm', () => {
   });
 
   it('should trigger invalid event if inputs are not filled', () => {
-    const { container } = render(
-      <CustomRenderer>
-        <OptionsForm />
-      </CustomRenderer>
-    );
+    const container = renderer({
+      component: () => <OptionsForm />,
+    });
     const button = container.querySelector('#addBundle');
     const input = container.querySelector('input');
 
@@ -63,11 +57,10 @@ describe('OptionsForm', () => {
     };
     const updateOptions = jest.fn();
 
-    const { container } = render(
-      <CustomRenderer mockedProps={{ options, updateOptions }}>
-        <OptionsForm />
-      </CustomRenderer>
-    );
+    const container = renderer({
+      component: () => <OptionsForm />,
+      mockedProps: { options, updateOptions },
+    });
     const form = container.querySelector('form');
     const [bundleName, urlParamKey] = container.querySelectorAll('input');
 

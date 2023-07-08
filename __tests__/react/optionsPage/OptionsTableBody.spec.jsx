@@ -1,16 +1,10 @@
 import '@testing-library/jest-dom';
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { OptionsTableBody } from '../../../src/react/components/OptionsTableBody';
-import CustomRenderer from './OptionsCustomRenderer';
+import { renderer } from './OptionsCustomRenderer';
 
 const updateOptions = jest.fn();
-const renderer = options =>
-  render(
-    <CustomRenderer mockedProps={{ options, updateOptions }}>
-      <OptionsTableBody />
-    </CustomRenderer>
-  );
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -18,7 +12,10 @@ beforeEach(() => {
 
 describe('OptionsTableBody', () => {
   it("should render a message if there're no options saved", () => {
-    const { container } = renderer([]);
+    const container = renderer({
+      component: () => <OptionsTableBody />,
+      mockedProps: { options: [] },
+    });
 
     expect(container.querySelector('tr td').textContent).toEqual(
       'Add some bundles!'
@@ -35,7 +32,10 @@ describe('OptionsTableBody', () => {
         urlParamKey: 'apiKey',
       },
     ];
-    const { container } = renderer(options);
+    const container = renderer({
+      component: () => <OptionsTableBody />,
+      mockedProps: { options },
+    });
     const tableDefinitions = container.querySelectorAll('tr td');
     const [bundleName, urlParamKey, buttonParent] = tableDefinitions;
     const button = buttonParent.children[0];
@@ -57,7 +57,10 @@ describe('OptionsTableBody', () => {
         urlParamKey: 'apiKey',
       },
     ];
-    const { container } = renderer(options);
+    const container = renderer({
+      component: () => <OptionsTableBody />,
+      mockedProps: { options },
+    });
     const bundleName = container.querySelector(
       '[data-value-type="bundleName"]'
     );
@@ -86,8 +89,10 @@ describe('OptionsTableBody', () => {
         urlParamKey: 'apiKey',
       },
     ];
-    const { container } = renderer(options);
-
+    const container = renderer({
+      component: () => <OptionsTableBody />,
+      mockedProps: { options, updateOptions },
+    });
     const bundleName = container.querySelector(
       '[data-value-type="bundleName"]'
     );
@@ -123,7 +128,10 @@ describe('OptionsTableBody', () => {
         urlParamKey: 'apiKey',
       },
     ];
-    const { container } = renderer(options);
+    const container = renderer({
+      component: () => <OptionsTableBody />,
+      mockedProps: { options, updateOptions },
+    });
     const urlParamKey = container.querySelector(
       '[data-value-type="urlParamKey"]'
     );
@@ -159,8 +167,10 @@ describe('OptionsTableBody', () => {
         urlParamKey: 'apiKey',
       },
     ];
-    const { container } = renderer(options);
-
+    const container = renderer({
+      component: () => <OptionsTableBody />,
+      mockedProps: { options, updateOptions },
+    });
     const deleteBtn = container.querySelector('.delete-bundle');
 
     fireEvent.click(deleteBtn);
