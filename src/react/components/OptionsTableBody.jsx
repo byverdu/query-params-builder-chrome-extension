@@ -27,7 +27,9 @@ export const OptionsTableBody = () => {
   if (!options.length) {
     return (
       <tr>
-        <td colSpan={3}>Add some bundles!</td>
+        <td style={{ display: 'table-cell', textAlign: 'center' }} colSpan={3}>
+          Add some bundles!
+        </td>
       </tr>
     );
   }

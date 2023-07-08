@@ -5,6 +5,20 @@ import { OptionsTableBody } from '../../../src/react/components/OptionsTableBody
 import { renderer } from './OptionsCustomRenderer';
 
 const updateOptions = jest.fn();
+const buildContainer = options =>
+  renderer({
+    component: () => <OptionsTableBody />,
+    mockedProps: { options, updateOptions },
+  });
+const options = [
+  {
+    checked: false,
+    canDeleteFromPopup: false,
+    id: '1234',
+    bundleName: 'API key',
+    urlParamKey: 'apiKey',
+  },
+];
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -12,10 +26,7 @@ beforeEach(() => {
 
 describe('OptionsTableBody', () => {
   it("should render a message if there're no options saved", () => {
-    const container = renderer({
-      component: () => <OptionsTableBody />,
-      mockedProps: { options: [] },
-    });
+    const container = buildContainer([]);
 
     expect(container.querySelector('tr td').textContent).toEqual(
       'Add some bundles!'
@@ -23,19 +34,7 @@ describe('OptionsTableBody', () => {
   });
 
   it('should render 3 <td> when options are provided', () => {
-    const options = [
-      {
-        checked: false,
-        canDeleteFromPopup: false,
-        id: '1234',
-        bundleName: 'API key',
-        urlParamKey: 'apiKey',
-      },
-    ];
-    const container = renderer({
-      component: () => <OptionsTableBody />,
-      mockedProps: { options },
-    });
+    const container = buildContainer(options);
     const tableDefinitions = container.querySelectorAll('tr td');
     const [bundleName, urlParamKey, buttonParent] = tableDefinitions;
     const button = buttonParent.children[0];
@@ -48,19 +47,7 @@ describe('OptionsTableBody', () => {
   });
 
   it('should be able to edit the <td>', () => {
-    const options = [
-      {
-        checked: false,
-        canDeleteFromPopup: false,
-        id: '1234',
-        bundleName: 'API key',
-        urlParamKey: 'apiKey',
-      },
-    ];
-    const container = renderer({
-      component: () => <OptionsTableBody />,
-      mockedProps: { options },
-    });
+    const container = buildContainer(options);
     const bundleName = container.querySelector(
       '[data-value-type="bundleName"]'
     );
@@ -80,19 +67,7 @@ describe('OptionsTableBody', () => {
   });
 
   it('should save the saved values when the bundleName <td> is blurred', () => {
-    const options = [
-      {
-        checked: false,
-        canDeleteFromPopup: false,
-        id: '1234',
-        bundleName: 'API key',
-        urlParamKey: 'apiKey',
-      },
-    ];
-    const container = renderer({
-      component: () => <OptionsTableBody />,
-      mockedProps: { options, updateOptions },
-    });
+    const container = buildContainer(options);
     const bundleName = container.querySelector(
       '[data-value-type="bundleName"]'
     );
@@ -128,10 +103,8 @@ describe('OptionsTableBody', () => {
         urlParamKey: 'apiKey',
       },
     ];
-    const container = renderer({
-      component: () => <OptionsTableBody />,
-      mockedProps: { options, updateOptions },
-    });
+    const container = buildContainer(options);
+
     const urlParamKey = container.querySelector(
       '[data-value-type="urlParamKey"]'
     );
@@ -158,19 +131,7 @@ describe('OptionsTableBody', () => {
   });
 
   it('should delete an option', () => {
-    const options = [
-      {
-        checked: false,
-        canDeleteFromPopup: false,
-        id: '1234',
-        bundleName: 'API key',
-        urlParamKey: 'apiKey',
-      },
-    ];
-    const container = renderer({
-      component: () => <OptionsTableBody />,
-      mockedProps: { options, updateOptions },
-    });
+    const container = buildContainer(options);
     const deleteBtn = container.querySelector('.delete-bundle');
 
     fireEvent.click(deleteBtn);
