@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { OptionContext } from '../pages/options/context.jsx';
 
 export const OptionsTableBody = () => {
-  const { updateOptions, options } = useContext(OptionContext);
+  const { setOptions, setUpdateAction, options } = useContext(OptionContext);
 
   const editHandler = e => {
     const id = e.target.parentElement.id;
@@ -15,13 +15,15 @@ export const OptionsTableBody = () => {
 
       return item;
     });
-    updateOptions(newOptions, 'updateOption');
+    setOptions(newOptions);
+    setUpdateAction('updateOption');
   };
 
   const deleteHandler = id => {
     const newOptions = options.filter(item => item.id !== id);
 
-    updateOptions(newOptions, 'deleteOption');
+    setOptions(newOptions);
+    setUpdateAction('deleteOption');
   };
 
   if (!options.length) {

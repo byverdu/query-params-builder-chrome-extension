@@ -1,18 +1,10 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-} from 'react';
+import React, { createContext, useEffect, useRef } from 'react';
 
 import {
   extensionApi,
   SET_STORAGE,
   GET_STORAGE,
-  REMOVE_ALL_STORAGE,
   OPTIONS_ITEM,
-  TABS_ITEM,
 } from '../../../extension/utils/api.js';
 import { sendMessageCatchHandler } from '../../utils/index.js';
 
@@ -39,61 +31,27 @@ const initialContext = {
   setToast: () => {},
   options: [],
   setOptions: () => {},
-  updateOptions: () => {},
+  updateAction: undefined,
+  setUpdateAction: () => {},
 };
 
 export const OptionContext = createContext(initialContext);
 
-export const AppProvider = ({ children }) => {
-  /**
-   * @type {UseState<Toast>}
-   */
-  const [toast, setToast] = useState(initialToast);
-  /**
-   * @type {UseState<BaseExtensionProps[]>}
-   */
-  const [options, setOptions] = useState([]);
+/**
+ *
+ * @param {OptionsContext & {children: React.ReactElement}} props
+ * @returns
+ */
+export const AppProvider = ({
+  children,
+  options,
+  setOptions,
+  toast,
+  setToast,
+  updateAction,
+  setUpdateAction,
+}) => {
   const optionsToFetch = useRef(true);
-
-  /**
-   * @type {OptionsContext['updateOptions']}
-   */
-  const updateOptions = useCallback(
-    (value, actionType) => {
-      /**
-       * @type {{[key in UpdateActions]: string}}
-       */
-      const toastText = {
-        saveNewOption: 'New option saved Successfully',
-        updateOption: 'Option updated Successfully',
-        deleteOption: 'Option deleted Successfully',
-        deleteAll: 'All options deleted Successfully',
-      };
-      const text = toastText[actionType];
-
-      if (actionType === 'deleteAll') {
-        sendMessage({
-          type: REMOVE_ALL_STORAGE,
-          payload: { value: [OPTIONS_ITEM, TABS_ITEM] },
-        })
-          .then(() => {
-            setToast({ type: 'success', text });
-          })
-          .catch(error => sendMessageCatchHandler(setToast, error, actionType));
-      }
-
-      sendMessage({
-        type: SET_STORAGE,
-        payload: { key: OPTIONS_ITEM, value },
-      })
-        .then(() => {
-          setOptions(value);
-          setToast({ type: 'success', text });
-        })
-        .catch(error => sendMessageCatchHandler(setToast, error, actionType));
-    },
-    [setToast, setOptions]
-  );
 
   useEffect(() => {
     if (optionsToFetch.current) {
@@ -104,7 +62,6 @@ export const AppProvider = ({ children }) => {
         },
       })
         .then(resp => {
-          console.log(resp);
           const validateResponse = Array.isArray(resp) ? resp : [];
           setOptions(validateResponse);
           setToast({ type: 'success', text: 'Options Restored Successfully' });
@@ -115,7 +72,30 @@ export const AppProvider = ({ children }) => {
     return () => {
       optionsToFetch.current = false;
     };
-  }, []);
+  }, [setOptions, setToast]);
+
+  useEffect(() => {
+    const text = {
+      saveNewOption: 'New option saved Successfully',
+      updateOption: 'Option updated Successfully',
+      deleteOption: 'Option deleted Successfully',
+      deleteAll: 'All options deleted Successfully',
+    }[updateAction];
+
+    switch (updateAction) {
+      case 'saveNewOption':
+        sendMessage({
+          type: SET_STORAGE,
+          payload: { key: OPTIONS_ITEM, value: options },
+        })
+          .then(() => {
+            setToast({ type: 'success', text });
+          })
+          .catch(error =>
+            sendMessageCatchHandler(setToast, error, updateAction)
+          );
+    }
+  }, [updateAction, setToast, options]);
 
   return (
     <OptionContext.Provider
@@ -124,7 +104,8 @@ export const AppProvider = ({ children }) => {
         setToast,
         options,
         setOptions,
-        updateOptions,
+        updateAction,
+        setUpdateAction,
       }}
     >
       {children}

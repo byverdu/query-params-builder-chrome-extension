@@ -5,7 +5,7 @@ import { OptionsTableBody } from '../../components/OptionsTableBody.jsx';
 import { OptionContext } from './context.jsx';
 
 export const Options = () => {
-  const { updateOptions } = useContext(OptionContext);
+  const { setUpdateAction } = useContext(OptionContext);
 
   return (
     <>
@@ -33,7 +33,7 @@ export const Options = () => {
           <div className="row save_options">
             <div className="col-2">
               <button
-                onClick={() => updateOptions([], 'deleteAll')}
+                onClick={() => setUpdateAction('deleteAll')}
                 id="removeAll"
                 style={{ width: '100%' }}
                 className="btn btn-danger"

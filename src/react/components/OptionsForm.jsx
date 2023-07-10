@@ -11,7 +11,7 @@ const inputs = [
 ];
 
 export const OptionsForm = () => {
-  const { updateOptions, options } = useContext(OptionContext);
+  const { options, setUpdateAction, setOptions } = useContext(OptionContext);
   const onSubmitHandler = useCallback(
     e => {
       e.preventDefault();
@@ -32,9 +32,10 @@ export const OptionsForm = () => {
         }
       }
 
-      updateOptions([...options, option], 'saveNewOption');
+      setOptions([...options, option]);
+      setUpdateAction('saveNewOption');
     },
-    [updateOptions, options]
+    [options, setOptions, setUpdateAction]
   );
 
   const onInvalidHandler = useCallback(e => {

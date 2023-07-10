@@ -83,11 +83,12 @@ type UseState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 type UpdateOptionsPopup = (options: BaseExtensionProps[]) => void;
 
 interface OptionsContext {
-  toast: Toast;
   options: BaseExtensionProps[];
   setOptions: React.Dispatch<React.SetStateAction<BaseExtensionProps[]>>;
+  toast: Toast;
   setToast: React.Dispatch<React.SetStateAction<Toast>>;
-  updateOptions: (options: BaseExtensionProps[], type: UpdateActions) => void;
+  updateAction: UpdateActions;
+  setUpdateAction: React.Dispatch<React.SetStateAction<UpdateActions>>;
 }
 
 interface PopupContext {

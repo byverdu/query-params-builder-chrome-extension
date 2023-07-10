@@ -4,10 +4,12 @@ import React from 'react';
 import { Options } from '../../../src/react/pages/options/Options.jsx';
 import { OptionsCustomRenderer } from './OptionsCustomRenderer';
 
-const updateOptions = jest.fn();
+const setOptions = jest.fn();
+const setUpdateAction = jest.fn();
 const mockedProps = {
   options: [],
-  updateOptions,
+  setOptions,
+  setUpdateAction,
   toast: { type: 'success', text: 'any text' },
 };
 
@@ -81,8 +83,10 @@ describe('Options', () => {
     expect(urlParamKey.value).toEqual('apiKey');
     fireEvent.submit(form);
 
-    expect(updateOptions).toBeCalledTimes(1);
-    expect(updateOptions).toBeCalledWith(newOptions, 'saveNewOption');
+    expect(setOptions).toBeCalledTimes(1);
+    expect(setOptions).toBeCalledWith(newOptions);
+    expect(setUpdateAction).toBeCalledTimes(1);
+    expect(setUpdateAction).toBeCalledWith('saveNewOption');
 
     mockedProps.options = newOptions;
 
@@ -118,7 +122,7 @@ describe('Options', () => {
 
     fireEvent.click(deleteBtn);
 
-    expect(updateOptions).toBeCalledTimes(1);
-    expect(updateOptions).toBeCalledWith([], 'deleteAll');
+    expect(setUpdateAction).toBeCalledTimes(1);
+    expect(setUpdateAction).toBeCalledWith('deleteAll');
   });
 });

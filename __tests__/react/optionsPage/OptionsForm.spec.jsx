@@ -55,11 +55,12 @@ describe('OptionsForm', () => {
       bundleName: 'API key',
       urlParamKey: 'apiKey',
     };
-    const updateOptions = jest.fn();
+    const setOptions = jest.fn();
+    const setUpdateAction = jest.fn();
 
     const container = renderer({
       component: () => <OptionsForm />,
-      mockedProps: { options, updateOptions },
+      mockedProps: { options, setOptions, setUpdateAction },
     });
     const form = container.querySelector('form');
     const [bundleName, urlParamKey] = container.querySelectorAll('input');
@@ -70,7 +71,9 @@ describe('OptionsForm', () => {
     expect(urlParamKey.value).toEqual('apiKey');
     fireEvent.submit(form);
 
-    expect(updateOptions).toBeCalledTimes(1);
-    expect(updateOptions).toBeCalledWith([...options, result], 'saveNewOption');
+    expect(setOptions).toBeCalledTimes(1);
+    expect(setOptions).toBeCalledWith([...options, result]);
+    expect(setUpdateAction).toBeCalledTimes(1);
+    expect(setUpdateAction).toBeCalledWith('saveNewOption');
   });
 });

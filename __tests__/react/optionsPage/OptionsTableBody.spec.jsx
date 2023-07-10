@@ -4,11 +4,12 @@ import { fireEvent } from '@testing-library/react';
 import { OptionsTableBody } from '../../../src/react/components/OptionsTableBody';
 import { renderer } from './OptionsCustomRenderer';
 
-const updateOptions = jest.fn();
+const setOptions = jest.fn();
+const setUpdateAction = jest.fn();
 const buildContainer = options =>
   renderer({
     component: () => <OptionsTableBody />,
-    mockedProps: { options, updateOptions },
+    mockedProps: { options, setOptions, setUpdateAction },
   });
 const options = [
   {
@@ -78,19 +79,18 @@ describe('OptionsTableBody', () => {
 
     fireEvent.blur(bundleName);
 
-    expect(updateOptions).toBeCalledTimes(1);
-    expect(updateOptions).toBeCalledWith(
-      [
-        {
-          checked: false,
-          canDeleteFromPopup: false,
-          id: '1234',
-          bundleName: 'new name',
-          urlParamKey: 'apiKey',
-        },
-      ],
-      'updateOption'
-    );
+    expect(setOptions).toBeCalledTimes(1);
+    expect(setOptions).toBeCalledWith([
+      {
+        checked: false,
+        canDeleteFromPopup: false,
+        id: '1234',
+        bundleName: 'new name',
+        urlParamKey: 'apiKey',
+      },
+    ]);
+    expect(setUpdateAction).toBeCalledTimes(1);
+    expect(setUpdateAction).toBeCalledWith('updateOption');
   });
 
   it('should save the saved values when the urlParamKey <td> is blurred', () => {
@@ -115,19 +115,18 @@ describe('OptionsTableBody', () => {
 
     fireEvent.blur(urlParamKey);
 
-    expect(updateOptions).toBeCalledTimes(1);
-    expect(updateOptions).toBeCalledWith(
-      [
-        {
-          checked: false,
-          canDeleteFromPopup: false,
-          id: '1234',
-          bundleName: 'API key',
-          urlParamKey: 'newName',
-        },
-      ],
-      'updateOption'
-    );
+    expect(setOptions).toBeCalledTimes(1);
+    expect(setOptions).toBeCalledWith([
+      {
+        checked: false,
+        canDeleteFromPopup: false,
+        id: '1234',
+        bundleName: 'API key',
+        urlParamKey: 'newName',
+      },
+    ]);
+    expect(setUpdateAction).toBeCalledTimes(1);
+    expect(setUpdateAction).toBeCalledWith('updateOption');
   });
 
   it('should delete an option', () => {
@@ -136,7 +135,9 @@ describe('OptionsTableBody', () => {
 
     fireEvent.click(deleteBtn);
 
-    expect(updateOptions).toBeCalledTimes(1);
-    expect(updateOptions).toBeCalledWith([], 'deleteOption');
+    expect(setOptions).toBeCalledTimes(1);
+    expect(setOptions).toBeCalledWith([]);
+    expect(setUpdateAction).toBeCalledTimes(1);
+    expect(setUpdateAction).toBeCalledWith('deleteOption');
   });
 });
