@@ -5,8 +5,13 @@ import {
   SET_STORAGE,
   GET_STORAGE,
   OPTIONS_ITEM,
+  REMOVE_ALL_STORAGE,
+  TABS_ITEM,
 } from '../../../extension/utils/api.js';
-import { sendMessageCatchHandler } from '../../utils/index.js';
+import {
+  sendMessageCatchHandler,
+  sendMessageAsyncHandler,
+} from '../../utils/index.js';
 
 /**
  * @type {API}
@@ -84,18 +89,33 @@ export const AppProvider = ({
 
     switch (updateAction) {
       case 'saveNewOption':
-        sendMessage({
-          type: SET_STORAGE,
-          payload: { key: OPTIONS_ITEM, value: options },
-        })
-          .then(() => {
-            setToast({ type: 'success', text });
-          })
-          .catch(error =>
-            sendMessageCatchHandler(setToast, error, updateAction)
-          );
+      case 'updateOption':
+      case 'deleteOption':
+        sendMessageAsyncHandler(
+          sendMessage({
+            type: SET_STORAGE,
+            payload: { key: OPTIONS_ITEM, value: options },
+          }),
+          setToast,
+          text,
+          updateAction
+        );
+        return;
+      case 'deleteAll':
+        sendMessageAsyncHandler(
+          sendMessage({
+            type: REMOVE_ALL_STORAGE,
+            payload: { value: [OPTIONS_ITEM, TABS_ITEM] },
+          }),
+          setToast,
+          text,
+          updateAction
+        );
+        return;
+      default:
+        return;
     }
-  }, [updateAction, setToast, options]);
+  }, [updateAction, options, setToast]);
 
   return (
     <OptionContext.Provider

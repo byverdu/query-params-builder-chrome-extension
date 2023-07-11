@@ -19,7 +19,28 @@ const { sendMessage } = extensionApi;
  */
 const sendMessageCatchHandler = (setToast, error, type) => {
   console.error(`QueryParamsBuilder extension ${type}`, String(error));
-  setToast({ type: 'danger', text: error.message });
+  setToast({ type: 'danger', text: `${type}: ${error.message}` });
+};
+
+/**
+ *
+ * @param {Promise} promise
+ * @param {React.Dispatch<React.SetStateAction<Toast>>} setToast
+ * @param {string} text
+ * @param {UpdateActions | ExtensionActions} type
+ */
+const sendMessageAsyncHandler = (promise, setToast, text, type) => {
+  promise
+    .then(() => {
+      setToast({ type: 'success', text });
+    })
+    .catch(error => {
+      console.error(`QueryParamsBuilder extension ${type}`, String(error));
+      setToast({
+        type: 'danger',
+        text: `${type}: ${error.message}`,
+      });
+    });
 };
 
 /**
@@ -28,7 +49,6 @@ const sendMessageCatchHandler = (setToast, error, type) => {
  * @returns {Promise<OptionsExtensionProps[] | BaseExtensionProps[]>}
  */
 const fetchTabStorage = async tabUrl => {
-  // const tabUrl = currentTab && currentTab.url;
   /**
    * @type {{[key: string]: OptionsExtensionProps[]}}
    */
@@ -64,4 +84,4 @@ const fetchTabStorage = async tabUrl => {
   return validTabsInfo;
 };
 
-export { sendMessageCatchHandler, fetchTabStorage };
+export { sendMessageCatchHandler, fetchTabStorage, sendMessageAsyncHandler };

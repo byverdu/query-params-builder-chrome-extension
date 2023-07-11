@@ -2,6 +2,7 @@ import { when } from 'jest-when';
 import {
   sendMessageCatchHandler,
   fetchTabStorage,
+  sendMessageAsyncHandler,
 } from '../../src/react/utils/index.js';
 import * as api from '../../src/extension/utils/api.js';
 
@@ -31,7 +32,7 @@ const tabsItem = {
   id: 'someId-2',
 };
 
-afterEach(() => {
+beforeEach(() => {
   jest.clearAllMocks();
 });
 
@@ -56,7 +57,54 @@ describe('react utils', () => {
       sendMessageCatchHandler(setToast, error, 'deleteAll');
 
       expect(setToast).toBeCalledTimes(1);
-      expect(setToast).toBeCalledWith({ type: 'danger', text: 'catch error' });
+      expect(setToast).toBeCalledWith({
+        type: 'danger',
+        text: 'deleteAll: catch error',
+      });
+    });
+  });
+
+  describe('sendMessageAsyncHandler', () => {
+    it('should be defined', () => {
+      expect(sendMessageAsyncHandler).toBeInstanceOf(Function);
+    });
+
+    it('should call the functions passed as argument', async () => {
+      const promise = new Promise(resolve => {
+        resolve('sucess');
+      });
+
+      await sendMessageAsyncHandler(promise, setToast, 'all good', 'deleteAll');
+
+      expect(setToast).toBeCalledTimes(1);
+      expect(setToast).toBeCalledWith({
+        type: 'success',
+        text: 'all good',
+      });
+    });
+
+    it('should call console.error', done => {
+      jest.spyOn(console, 'error');
+
+      const promise = new Promise((_, reject) => {
+        reject(new Error('sendMessageAsyncHandler catch error'));
+      });
+
+      sendMessageAsyncHandler(promise, setToast, 'error.message', 'deleteAll');
+
+      setTimeout(() => {
+        expect(console.error).toBeCalledTimes(1);
+        expect(console.error).toBeCalledWith(
+          'QueryParamsBuilder extension deleteAll',
+          'Error: sendMessageAsyncHandler catch error'
+        );
+        expect(setToast).toBeCalledTimes(1);
+        expect(setToast).toBeCalledWith({
+          type: 'danger',
+          text: 'deleteAll: sendMessageAsyncHandler catch error',
+        });
+        done();
+      }, 0);
     });
   });
 
