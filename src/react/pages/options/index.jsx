@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AppProvider } from './context.jsx';
+import { AppProvider } from './OptionsContext.jsx';
 import { Options } from './Options.jsx';
 
 const App = () => {

@@ -1,30 +1,13 @@
 import React, { useContext } from 'react';
-import { OptionContext } from '../pages/options/context.jsx';
+import { OptionContext } from '../pages/options/OptionsContext.jsx';
 
-export const OptionsTableBody = () => {
-  const { setOptions, setUpdateAction, options } = useContext(OptionContext);
-
-  const editHandler = e => {
-    const id = e.target.parentElement.id;
-    const type = e.target.dataset.valueType;
-    const value = e.target.textContent.trim();
-    const newOptions = options.map(item => {
-      if (item.id === id) {
-        item[type] = value;
-      }
-
-      return item;
-    });
-    setOptions(newOptions);
-    setUpdateAction('updateOption');
-  };
-
-  const deleteHandler = id => {
-    const newOptions = options.filter(item => item.id !== id);
-
-    setOptions(newOptions);
-    setUpdateAction('deleteOption');
-  };
+/**
+ *
+ * @param {OptionsTableBodyProps} props
+ * @returns
+ */
+export const OptionsTableBody = ({ deleteHandler, editHandler }) => {
+  const { options } = useContext(OptionContext);
 
   if (!options.length) {
     return (
@@ -60,7 +43,8 @@ export const OptionsTableBody = () => {
           </td>
           <td>
             <button
-              onClick={() => deleteHandler(id)}
+              data-bundle-id={id}
+              onClick={deleteHandler}
               className="btn btn-outline-danger delete-bundle"
             >
               Delete

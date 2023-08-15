@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useContext } from 'react';
-import { OptionContext } from '../pages/options/context.jsx';
+import { OptionContext } from '../pages/options/OptionsContext.jsx';
 
 export const Toast = () => {
   /**

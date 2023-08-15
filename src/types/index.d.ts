@@ -78,6 +78,8 @@ type UpdateActions =
   | 'deleteOption'
   | 'deleteAll';
 
+type PopupActions = 'deleteTabItem' | 'applyUrlParams' | 'addNewTabBundle';
+
 type UseState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
 type UpdateOptionsPopup = (options: BaseExtensionProps[]) => void;
@@ -95,5 +97,18 @@ interface PopupContext {
   currentTab: chrome.tabs.Tab;
   setCurrentTab: React.Dispatch<React.SetStateAction<chrome.tabs.Tab>>;
   options: OptionsExtensionProps[];
-  setOptions: React.Dispatch<React.SetStateAction<OptionsExtensionProps[]>>;
+  setOptions: React.Dispatch<
+    React.SetStateAction<OptionsExtensionProps[] | BaseExtensionProps[]>
+  >;
+  updateAction: PopupActions;
+  setUpdateAction: React.Dispatch<React.SetStateAction<PopupActions>>;
+}
+
+interface FormProps {
+  onSubmitHandler: (event: FormEvent<Element>) => void;
+}
+
+interface OptionsTableBodyProps {
+  deleteHandler: (event: MouseEvent<Element>) => void;
+  editHandler: (event: MouseEvent<Element>) => void;
 }

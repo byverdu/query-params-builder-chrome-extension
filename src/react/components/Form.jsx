@@ -1,5 +1,4 @@
-import React, { useCallback, useContext } from 'react';
-import { OptionContext } from '../pages/options/context.jsx';
+import React, { useCallback } from 'react';
 
 const inputs = [
   {
@@ -10,34 +9,12 @@ const inputs = [
   { id: 'urlParamKey', placeholder: 'i.e. apiKey', text: 'Url param key' },
 ];
 
-export const OptionsForm = () => {
-  const { options, setUpdateAction, setOptions } = useContext(OptionContext);
-  const onSubmitHandler = useCallback(
-    e => {
-      e.preventDefault();
-
-      const elements = e.target.elements || [];
-      const option = {
-        checked: false,
-        canDeleteFromPopup: false,
-        id: crypto.randomUUID(),
-      };
-
-      for (const elem of elements) {
-        if (elem.nodeName === 'INPUT') {
-          option[elem.id] = elem.value;
-
-          // remove old value
-          elem.value = '';
-        }
-      }
-
-      setOptions([...options, option]);
-      setUpdateAction('saveNewOption');
-    },
-    [options, setOptions, setUpdateAction]
-  );
-
+/**
+ *
+ * @param {FormProps} props
+ * @returns {React.JSX.Element}
+ */
+export const Form = ({ onSubmitHandler }) => {
   const onInvalidHandler = useCallback(e => {
     e.preventDefault();
 

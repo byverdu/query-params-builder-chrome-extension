@@ -3,14 +3,10 @@ import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import { OptionsTableBody } from '../../../src/react/components/OptionsTableBody';
 import { renderer } from './OptionsCustomRenderer';
+import * as utils from '../../../src/react/utils/index.js';
 
-const setOptions = jest.fn();
-const setUpdateAction = jest.fn();
-const buildContainer = options =>
-  renderer({
-    component: () => <OptionsTableBody />,
-    mockedProps: { options, setOptions, setUpdateAction },
-  });
+jest.mock('../../../src/react/utils/index.js');
+
 const options = [
   {
     checked: false,
@@ -20,6 +16,19 @@ const options = [
     urlParamKey: 'apiKey',
   },
 ];
+
+const deleteHandler = jest.fn();
+const editHandler = jest.fn();
+const buildContainer = options =>
+  renderer({
+    component: () => (
+      <OptionsTableBody
+        deleteHandler={deleteHandler}
+        editHandler={editHandler}
+      />
+    ),
+    mockedProps: { options },
+  });
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -79,18 +88,7 @@ describe('OptionsTableBody', () => {
 
     fireEvent.blur(bundleName);
 
-    expect(setOptions).toBeCalledTimes(1);
-    expect(setOptions).toBeCalledWith([
-      {
-        checked: false,
-        canDeleteFromPopup: false,
-        id: '1234',
-        bundleName: 'new name',
-        urlParamKey: 'apiKey',
-      },
-    ]);
-    expect(setUpdateAction).toBeCalledTimes(1);
-    expect(setUpdateAction).toBeCalledWith('updateOption');
+    expect(editHandler).toBeCalledTimes(1);
   });
 
   it('should save the saved values when the urlParamKey <td> is blurred', () => {
@@ -115,29 +113,15 @@ describe('OptionsTableBody', () => {
 
     fireEvent.blur(urlParamKey);
 
-    expect(setOptions).toBeCalledTimes(1);
-    expect(setOptions).toBeCalledWith([
-      {
-        checked: false,
-        canDeleteFromPopup: false,
-        id: '1234',
-        bundleName: 'API key',
-        urlParamKey: 'newName',
-      },
-    ]);
-    expect(setUpdateAction).toBeCalledTimes(1);
-    expect(setUpdateAction).toBeCalledWith('updateOption');
+    expect(editHandler).toBeCalledTimes(1);
   });
 
-  it('should delete an option', () => {
+  it('should call deleteHandler', () => {
     const container = buildContainer(options);
     const deleteBtn = container.querySelector('.delete-bundle');
 
     fireEvent.click(deleteBtn);
 
-    expect(setOptions).toBeCalledTimes(1);
-    expect(setOptions).toBeCalledWith([]);
-    expect(setUpdateAction).toBeCalledTimes(1);
-    expect(setUpdateAction).toBeCalledWith('deleteOption');
+    expect(deleteHandler).toBeCalledTimes(1);
   });
 });

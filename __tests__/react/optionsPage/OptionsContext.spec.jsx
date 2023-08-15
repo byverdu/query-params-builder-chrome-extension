@@ -1,4 +1,3 @@
-// import '@testing-library/jest-dom';
 import React, { useContext } from 'react';
 import { render, fireEvent, act, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
@@ -7,7 +6,7 @@ import * as api from '../../../src/extension/utils/api.js';
 import {
   OptionContext,
   AppProvider,
-} from '../../../src/react/pages/options/context';
+} from '../../../src/react/pages/options/OptionsContext';
 
 jest.mock('../../../src/extension/utils/api.js');
 
@@ -100,7 +99,7 @@ describe('Options', () => {
     fireEvent.submit(form);
 
     expect(setOptions).toHaveBeenCalledTimes(1);
-    expect(setOptions).toBeCalledWith(newOption);
+    expect(setOptions).toBeCalledWith(expect.any(Function));
 
     initialState.options = newOption;
     initialState.updateAction = 'saveNewOption';
@@ -224,7 +223,7 @@ describe('Options', () => {
 
     fireEvent.click(deleteBtn);
 
-    expect(setOptions).toBeCalledWith([]);
+    expect(setOptions).toBeCalledWith(expect.any(Function));
     expect(setUpdateAction).toBeCalledWith('deleteOption');
 
     initialState.options = [];

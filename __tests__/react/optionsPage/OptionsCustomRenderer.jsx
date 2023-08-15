@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
-import { OptionContext } from '../../../src/react/pages/options/context.jsx';
+import { OptionContext } from '../../../src/react/pages/options/OptionsContext.jsx';
 
 /**
  * @param {{component: () => React.JSX.Element,mockedProps?: OptionsContext}} props

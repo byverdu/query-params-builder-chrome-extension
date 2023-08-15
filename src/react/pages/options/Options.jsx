@@ -1,11 +1,47 @@
-import React, { useContext } from 'react';
-import { OptionsForm } from '../../components/OptionsForm.jsx';
+import React, { useContext, useCallback } from 'react';
 import { Toast } from '../../components/Toast.jsx';
 import { OptionsTableBody } from '../../components/OptionsTableBody.jsx';
-import { OptionContext } from './context.jsx';
+import { OptionContext } from './OptionsContext.jsx';
+import { Form } from '../../components/Form.jsx';
+import {
+  updateState,
+  getNewItemToSave,
+  removeItemFromState,
+  editItemFromState,
+} from '../../utils/index.js';
 
 export const Options = () => {
-  const { setUpdateAction } = useContext(OptionContext);
+  const { setUpdateAction, setOptions } = useContext(OptionContext);
+  const onSubmitHandler = useCallback(
+    e => {
+      e.preventDefault();
+
+      const elements = e.target.elements || [];
+      const option = getNewItemToSave('options', elements);
+
+      setOptions(prevState => updateState(prevState, option));
+      setUpdateAction('saveNewOption');
+    },
+    [setOptions, setUpdateAction]
+  );
+
+  const deleteHandler = event => {
+    const bundleId = event.target.dataset.bundleId;
+
+    if (bundleId) {
+      setOptions(prevState => removeItemFromState(prevState, bundleId));
+      setUpdateAction('deleteOption');
+    }
+  };
+
+  const editHandler = e => {
+    const id = e.target.parentElement.id;
+    const key = e.target.dataset.valueType;
+    const value = e.target.textContent.trim();
+
+    setOptions(prevState => editItemFromState(prevState, { id, key, value }));
+    setUpdateAction('updateOption');
+  };
 
   return (
     <>
@@ -14,7 +50,7 @@ export const Options = () => {
           <h1>QueryParamsBuilder Options</h1>
         </div>
         <Toast />
-        <OptionsForm />
+        <Form onSubmitHandler={onSubmitHandler} />
         <div className="row selected_bundles">
           <div id="selected_bundles">
             <table className="table table-striped table-bordered">
@@ -26,7 +62,10 @@ export const Options = () => {
                 </tr>
               </thead>
               <tbody>
-                <OptionsTableBody />
+                <OptionsTableBody
+                  deleteHandler={deleteHandler}
+                  editHandler={editHandler}
+                />
               </tbody>
             </table>
           </div>

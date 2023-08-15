@@ -3,6 +3,10 @@ import {
   sendMessageCatchHandler,
   fetchTabStorage,
   sendMessageAsyncHandler,
+  updateState,
+  getNewItemToSave,
+  removeItemFromState,
+  editItemFromState,
 } from '../../src/react/utils/index.js';
 import * as api from '../../src/extension/utils/api.js';
 
@@ -111,11 +115,11 @@ describe('react utils', () => {
   describe('fetchTabStorage', () => {
     const sendMessageTabs = {
       type: api.GET_STORAGE,
-      payload: { key: api.TABS_ITEM },
+      payload: { value: api.TABS_ITEM },
     };
     const sendMessageOptions = {
       type: api.GET_STORAGE,
-      payload: { key: api.OPTIONS_ITEM },
+      payload: { value: api.OPTIONS_ITEM },
     };
 
     beforeEach(() => {
@@ -185,6 +189,87 @@ describe('react utils', () => {
       await expect(fetchTabStorage('someUrl')).resolves.toMatchObject([
         optionsItem,
       ]);
+    });
+  });
+
+  describe('updateState', () => {
+    it('should be defined', () => {
+      expect(updateState).toBeInstanceOf(Function);
+    });
+    it("should return prevState if it's not an array", () => {
+      expect(updateState(2)).toEqual(2);
+    });
+
+    it('should update the state', () => {
+      expect(updateState([2], 3)).toEqual(expect.arrayContaining([2, 3]));
+    });
+  });
+
+  describe('removeItemFromState', () => {
+    it('should be defined', () => {
+      expect(removeItemFromState).toBeInstanceOf(Function);
+    });
+    it("should return prevState if it's not an array", () => {
+      expect(removeItemFromState(2)).toEqual(2);
+    });
+
+    it('should update the state', () => {
+      expect(removeItemFromState([{ id: '3' }], '3').length).toEqual(0);
+    });
+  });
+
+  describe('editItemFromState', () => {
+    it('should be defined', () => {
+      expect(editItemFromState).toBeInstanceOf(Function);
+    });
+    it("should return prevState if it's not an array", () => {
+      expect(editItemFromState(2, {})).toEqual(2);
+    });
+    it('should edit an item in the state', () => {
+      expect(
+        editItemFromState([{ id: '3', bundleName: 'api key' }], {
+          id: '3',
+          key: 'bundleName',
+          value: 'new value',
+        })
+      ).toEqual([{ id: '3', bundleName: 'new value' }]);
+    });
+  });
+
+  describe('getNewItemToSave', () => {
+    let form;
+    const inputs = ` <input id="bundleName" value="ApiKey" />
+    <input id="bundleName" value="ApiKey" />`;
+
+    beforeEach(() => {
+      form = document.createElement('form');
+      form.insertAdjacentHTML('afterbegin', inputs);
+    });
+
+    it('should be defined', () => {
+      expect(getNewItemToSave).toBeInstanceOf(Function);
+    });
+
+    it('should generate the item for a options form', () => {
+      expect(getNewItemToSave('options', form.elements)).toEqual(
+        expect.objectContaining({
+          checked: false,
+          canDeleteFromPopup: false,
+          id: '5678',
+          bundleName: 'ApiKey',
+        })
+      );
+    });
+
+    it('should generate the item for a popup form', () => {
+      expect(getNewItemToSave('popup', form.elements)).toEqual(
+        expect.objectContaining({
+          checked: false,
+          canDeleteFromPopup: true,
+          id: '5678',
+          bundleName: 'ApiKey',
+        })
+      );
     });
   });
 });
