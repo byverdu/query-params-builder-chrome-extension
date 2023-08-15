@@ -146,6 +146,16 @@ const getNewItemToSave = (type, elements) => {
     if (elem.nodeName === 'INPUT') {
       newItem[elem.id] = elem.value;
 
+      if (elem.className.includes('is-invalid')) {
+        const placeholders = {
+          bundleName: 'i.e. API Key',
+          urlParamKey: 'i.e. apiKey',
+        };
+
+        elem.classList.remove('is-invalid');
+        elem.placeholder = placeholders[elem.id];
+      }
+
       // remove old value
       elem.value = '';
     }
