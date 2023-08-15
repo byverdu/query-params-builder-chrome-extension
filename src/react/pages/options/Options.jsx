@@ -43,6 +43,11 @@ export const Options = () => {
     setUpdateAction('updateOption');
   };
 
+  const deleteAllHandler = () => {
+    setUpdateAction('deleteAll');
+    setOptions([]);
+  };
+
   return (
     <>
       <div className="container">
@@ -72,7 +77,7 @@ export const Options = () => {
           <div className="row save_options">
             <div className="col-2">
               <button
-                onClick={() => setUpdateAction('deleteAll')}
+                onClick={deleteAllHandler}
                 id="removeAll"
                 style={{ width: '100%' }}
                 className="btn btn-danger"
