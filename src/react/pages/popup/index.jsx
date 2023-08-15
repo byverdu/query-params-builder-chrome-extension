@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Popup } from './Popup.jsx';
 
-const Popup = () => {
-  return <div>Popup Page</div>;
+import { PopupProvider } from './PopupContext.jsx';
+
+const App = () => {
+  /**
+   * @type {UseState<chrome.tabs.Tab>}
+   */
+  const [currentTab, setCurrentTab] = useState(null);
+  const [options, setOptions] = useState([]);
+  /**
+   * @type {UseState<UpdateActions>}
+   */
+  const [updateAction, setUpdateAction] = useState();
+
+  return (
+    <PopupProvider
+      currentTab={currentTab}
+      setCurrentTab={setCurrentTab}
+      options={options}
+      setOptions={setOptions}
+      updateAction={updateAction}
+      setUpdateAction={setUpdateAction}
+    >
+      <Popup />
+    </PopupProvider>
+  );
 };
 
-const container = document.getElementById('root');
-
-createRoot(container).render(<Popup />);
+createRoot(document.getElementById('root')).render(<App />);

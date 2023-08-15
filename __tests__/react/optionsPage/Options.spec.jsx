@@ -106,6 +106,42 @@ describe('Options', () => {
     expect(secondTd.textContent).toEqual('apiKey');
   });
 
+  it('should remove the invalid state after the form is submitted', () => {
+    const { container, rerender } = render(
+      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
+        <Options />
+      </OptionsCustomRenderer>
+    );
+
+    const form = container.querySelector('form');
+    const button = container.querySelector('#addBundle');
+    const [bundleName, urlParamKey] = container.querySelectorAll('input');
+
+    fireEvent.click(button);
+
+    expect(bundleName.className).toMatch(/is-invalid/);
+    expect(bundleName.placeholder).toEqual('This value can not be empty');
+
+    fireEvent.change(bundleName, { target: { value: 'API key' } });
+    expect(bundleName.value).toEqual('API key');
+    fireEvent.change(urlParamKey, { target: { value: 'apiKey' } });
+    expect(urlParamKey.value).toEqual('apiKey');
+
+    fireEvent.submit(form);
+    // fireEvent.click(button);
+
+    rerender(
+      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
+        <Options />
+      </OptionsCustomRenderer>
+    );
+
+    const [bundleName2] = container.querySelectorAll('input');
+
+    expect(bundleName2.className).not.toMatch(/is-invalid/);
+    // expect(input.placeholder).toEqual('This value can not be empty');
+  });
+
   it('should edit values when a <td> is blurred', () => {
     const prevState = [option];
     const editValues = {
