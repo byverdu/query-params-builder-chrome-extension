@@ -1,7 +1,7 @@
 {
-  "name": "QueryParamsBuilder",
+  "name": "URL Query Params Builder",
   "description": "Define key/value pairs of query params that you can apply to the url for every single tab.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "manifest_version": 3,
   "action": {
     "default_icon": {
