@@ -238,8 +238,7 @@ describe('react utils', () => {
 
   describe('getNewItemToSave', () => {
     let form;
-    const inputs = ` <input id="bundleName" value="ApiKey" />
-    <input id="bundleName" value="ApiKey" />`;
+    const inputs = `<input class="is-invalid" id="bundleName" value="ApiKey" />`;
 
     beforeEach(() => {
       form = document.createElement('form');
@@ -270,6 +269,19 @@ describe('react utils', () => {
           bundleName: 'ApiKey',
         })
       );
+    });
+    it('should reset the input value', () => {
+      const input = form.querySelector('input');
+      getNewItemToSave('popup', form.elements);
+
+      expect(input.value).toEqual('');
+    });
+    it('should remove the invalid styles', () => {
+      const input = form.querySelector('input');
+      getNewItemToSave('popup', form.elements);
+
+      expect(input.className).not.toMatch(/is-invalid/);
+      expect(input.placeholder).toEqual('i.e. API Key');
     });
   });
 });
