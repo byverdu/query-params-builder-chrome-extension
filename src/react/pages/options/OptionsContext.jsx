@@ -46,7 +46,7 @@ export const OptionContext = createContext(initialContext);
  *
  * @param {OptionsContext & {children: React.ReactElement}} props
  */
-export const AppProvider = ({
+export const OptionsProvider = ({
   children,
   options,
   setOptions,

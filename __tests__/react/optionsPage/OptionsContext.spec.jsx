@@ -5,7 +5,7 @@ import { Options } from '../../../src/react/pages/options/Options.jsx';
 import * as api from '../../../src/extension/utils/api.js';
 import {
   OptionContext,
-  AppProvider,
+  OptionsProvider,
 } from '../../../src/react/pages/options/OptionsContext';
 
 jest.mock('../../../src/extension/utils/api.js');
@@ -45,15 +45,15 @@ describe('Options', () => {
 
   it('should call api.sendMessage on the first render and set the options', async () => {
     const { rerender } = render(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     await rerender(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     expect(api.extensionApi.sendMessage).toBeCalledTimes(1);
@@ -84,9 +84,9 @@ describe('Options', () => {
     ];
 
     const { rerender, container } = render(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     const form = container.querySelector('form');
@@ -104,9 +104,9 @@ describe('Options', () => {
     initialState.options = newOption;
     initialState.updateAction = 'saveNewOption';
     await rerender(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     expect(api.extensionApi.sendMessage).toHaveBeenCalledTimes(2);
@@ -157,9 +157,9 @@ describe('Options', () => {
     ];
 
     const { rerender, container } = render(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     const bundleName = container.querySelector(
@@ -184,9 +184,9 @@ describe('Options', () => {
     initialState.options = updatedOption;
     initialState.updateAction = 'updateOption';
     await rerender(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     expect(api.extensionApi.sendMessage).toBeCalledWith({
@@ -214,9 +214,9 @@ describe('Options', () => {
     ];
 
     const { rerender, container } = render(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     const deleteBtn = container.querySelector('.delete-bundle');
@@ -229,9 +229,9 @@ describe('Options', () => {
     initialState.options = [];
     initialState.updateAction = 'deleteOption';
     await rerender(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     expect(api.extensionApi.sendMessage).toBeCalledWith({
@@ -259,24 +259,25 @@ describe('Options', () => {
     ];
 
     const { rerender, container } = render(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     const deleteBtn = container.querySelector('#removeAll');
 
     fireEvent.click(deleteBtn);
 
-    expect(setOptions).not.toBeCalled();
+    expect(setOptions).toBeCalledTimes(1);
+    expect(setOptions).toBeCalledWith([]);
     expect(setUpdateAction).toBeCalledWith('deleteAll');
 
     initialState.options = [];
     initialState.updateAction = 'deleteAll';
     await rerender(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     expect(api.extensionApi.sendMessage).toBeCalledWith({
@@ -295,9 +296,9 @@ describe('Options', () => {
       .mockRejectedValue(new Error('failed to restore'));
 
     render(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     await waitFor(() => {
@@ -316,9 +317,9 @@ describe('Options', () => {
     initialState.updateAction = 'saveNewOption';
 
     render(
-      <AppProvider {...initialState}>
+      <OptionsProvider {...initialState}>
         <Options />
-      </AppProvider>
+      </OptionsProvider>
     );
 
     await waitFor(() => {

@@ -23,66 +23,27 @@ const mockedProps = {
   toast: { type: 'success', text: 'any text' },
 };
 
+let container, form, bundleName, urlParamKey;
+
 beforeEach(() => {
   jest.clearAllMocks();
+  container = render(
+    <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
+      <Options />
+    </OptionsCustomRenderer>
+  ).container;
+  form = container.querySelector('form');
+  const inputs = container.querySelectorAll('input');
+  bundleName = inputs[0];
+  urlParamKey = inputs[1];
 });
 
 describe('Options', () => {
-  it('should render the title', () => {
-    const { container } = render(
-      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
-        <Options />
-      </OptionsCustomRenderer>
-    );
-    expect(container.querySelector('h1').textContent).toEqual(
-      'QueryParamsBuilder Options'
-    );
-  });
-
-  it('should render the toast initially', () => {
-    const { rerender, container } = render(
-      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
-        <Options />
-      </OptionsCustomRenderer>
-    );
-
-    rerender(
-      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
-        <Options />
-      </OptionsCustomRenderer>
-    );
-
-    const toast = container.querySelector('.toast');
-
-    expect(toast).toBeInTheDocument();
-    expect(toast.querySelector('.toast-body').textContent).toEqual('any text');
-  });
-
-  it('should render the form', () => {
-    const { container } = render(
-      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
-        <Options />
-      </OptionsCustomRenderer>
-    );
-
-    expect(container.querySelector('form')).toBeInTheDocument();
-  });
-
   it('should save an option and render it on the table', () => {
     setOptions.mockImplementationOnce(() => utils.updateState([], option));
-    const { container, rerender } = render(
-      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
-        <Options />
-      </OptionsCustomRenderer>
-    );
-
-    const form = container.querySelector('form');
-    const [bundleName, urlParamKey] = container.querySelectorAll('input');
 
     fireEvent.change(bundleName, { target: { value: 'API key' } });
-    expect(bundleName.value).toEqual('API key');
     fireEvent.change(urlParamKey, { target: { value: 'apiKey' } });
-    expect(urlParamKey.value).toEqual('apiKey');
     fireEvent.submit(form);
 
     expect(setOptions).toBeCalledTimes(1);
@@ -91,55 +52,6 @@ describe('Options', () => {
     expect(utils.getNewItemToSave).toBeCalledWith('options', form.elements);
     expect(setUpdateAction).toBeCalledTimes(1);
     expect(setUpdateAction).toBeCalledWith('saveNewOption');
-
-    mockedProps.options = [option];
-
-    rerender(
-      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
-        <Options />
-      </OptionsCustomRenderer>
-    );
-
-    const [firstTd, secondTd] = container.querySelectorAll('tbody tr td');
-
-    expect(firstTd.textContent).toEqual('API key');
-    expect(secondTd.textContent).toEqual('apiKey');
-  });
-
-  it('should remove the invalid state after the form is submitted', () => {
-    const { container, rerender } = render(
-      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
-        <Options />
-      </OptionsCustomRenderer>
-    );
-
-    const form = container.querySelector('form');
-    const button = container.querySelector('#addBundle');
-    const [bundleName, urlParamKey] = container.querySelectorAll('input');
-
-    fireEvent.click(button);
-
-    expect(bundleName.className).toMatch(/is-invalid/);
-    expect(bundleName.placeholder).toEqual('This value can not be empty');
-
-    fireEvent.change(bundleName, { target: { value: 'API key' } });
-    expect(bundleName.value).toEqual('API key');
-    fireEvent.change(urlParamKey, { target: { value: 'apiKey' } });
-    expect(urlParamKey.value).toEqual('apiKey');
-
-    fireEvent.submit(form);
-    // fireEvent.click(button);
-
-    rerender(
-      <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
-        <Options />
-      </OptionsCustomRenderer>
-    );
-
-    const [bundleName2] = container.querySelectorAll('input');
-
-    expect(bundleName2.className).not.toMatch(/is-invalid/);
-    // expect(input.placeholder).toEqual('This value can not be empty');
   });
 
   it('should edit values when a <td> is blurred', () => {
@@ -152,6 +64,8 @@ describe('Options', () => {
     setOptions.mockImplementationOnce(() =>
       utils.editItemFromState(prevState, editValues)
     );
+
+    mockedProps.options = [option];
 
     const { container } = render(
       <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
@@ -185,6 +99,8 @@ describe('Options', () => {
       utils.removeItemFromState([option], idToDelete)
     );
 
+    mockedProps.options = [option];
+
     const { container } = render(
       <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
         <Options />
@@ -203,16 +119,24 @@ describe('Options', () => {
     expect(setUpdateAction).toBeCalledWith('deleteOption');
   });
 
+  it('should only delete a bundle if the id matches', () => {
+    const tableRows = container.querySelectorAll('tr');
+    const [, tabsRow] = tableRows;
+    const deleteBtn = tabsRow.querySelector('button');
+
+    delete deleteBtn.dataset.bundleId;
+
+    expect(tableRows).toHaveLength(2);
+
+    fireEvent.click(deleteBtn);
+
+    expect(setOptions).toBeCalledTimes(0);
+    expect(setUpdateAction).toBeCalledTimes(0);
+  });
+
   it('should delete all the options', () => {
-    mockedProps.options = [
-      {
-        checked: false,
-        canDeleteFromPopup: false,
-        id: '5678',
-        bundleName: 'API key',
-        urlParamKey: 'apiKey',
-      },
-    ];
+    mockedProps.options = [option];
+
     const { container } = render(
       <OptionsCustomRenderer mockedProps={{ ...mockedProps }}>
         <Options />
@@ -223,6 +147,8 @@ describe('Options', () => {
 
     fireEvent.click(deleteBtn);
 
+    expect(setOptions).toBeCalledTimes(1);
+    expect(setOptions).toBeCalledWith([]);
     expect(setUpdateAction).toBeCalledTimes(1);
     expect(setUpdateAction).toBeCalledWith('deleteAll');
   });

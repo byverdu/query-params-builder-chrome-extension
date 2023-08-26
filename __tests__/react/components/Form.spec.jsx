@@ -19,6 +19,20 @@ describe('OptionsForm', () => {
     expect(inputs[1].placeholder).toEqual('i.e. apiKey');
   });
 
+  it('should only add invalid state if the input is invalid', () => {
+    const { container } = render(<Form />);
+    const button = container.querySelector('#addBundle');
+    const input = container.querySelector('input');
+    const [bundleName] = container.querySelectorAll('input');
+
+    fireEvent.change(bundleName, { target: { value: 'API key' } });
+    fireEvent.click(button);
+
+    expect(button).toBeInTheDocument();
+    expect(input.className).not.toMatch(/is-invalid/);
+    expect(input.placeholder).toEqual('i.e. API Key');
+  });
+
   it('should trigger invalid event if inputs are not filled', () => {
     const { container } = render(<Form />);
     const button = container.querySelector('#addBundle');

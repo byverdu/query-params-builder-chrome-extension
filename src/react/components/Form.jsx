@@ -20,10 +20,8 @@ export const Form = ({ onSubmitHandler }) => {
 
     const elem = e.target;
 
-    if (elem && !elem.validity.valid) {
-      elem.classList.add('is-invalid');
-      elem.placeholder = 'This value can not be empty';
-    }
+    elem.classList.add('is-invalid');
+    elem.placeholder = 'This value can not be empty';
   }, []);
 
   return (

@@ -9,6 +9,10 @@ import { OptionContext } from '../pages/options/OptionsContext.jsx';
 export const OptionsTableBody = ({ deleteHandler, editHandler }) => {
   const { options } = useContext(OptionContext);
 
+  if (!options) {
+    return;
+  }
+
   if (!options.length) {
     return (
       <tr>

@@ -16,7 +16,7 @@ export const Options = () => {
     e => {
       e.preventDefault();
 
-      const elements = e.target.elements || [];
+      const elements = e.target.elements;
       const option = getNewItemToSave('options', elements);
 
       setOptions(prevState => updateState(prevState, option));

@@ -3,9 +3,6 @@ import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import { OptionsTableBody } from '../../../src/react/components/OptionsTableBody';
 import { renderer } from './OptionsCustomRenderer';
-import * as utils from '../../../src/react/utils/index.js';
-
-jest.mock('../../../src/react/utils/index.js');
 
 const options = [
   {
@@ -35,6 +32,12 @@ beforeEach(() => {
 });
 
 describe('OptionsTableBody', () => {
+  it('should render nothing if no options are available', () => {
+    const container = buildContainer(undefined);
+
+    expect(container.querySelector('table')).not.toBeInTheDocument();
+  });
+
   it("should render a message if there're no options saved", () => {
     const container = buildContainer([]);
 
