@@ -18,6 +18,10 @@ export const PopupTableBody = () => {
     [setOptions, options, setUpdateAction]
   );
 
+  if (!options) {
+    return;
+  }
+
   if (!options.length) {
     return (
       <tr>
@@ -50,7 +54,6 @@ export const PopupTableBody = () => {
                   data-bundle-name={bundleName}
                   id={id}
                   defaultChecked={checked}
-                  data-can-delete-from-popup={canDeleteFromPopup}
                 />
                 {bundleName}
               </label>

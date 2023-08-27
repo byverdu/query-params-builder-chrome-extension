@@ -50,8 +50,6 @@ export const PopupProvider = ({
     if (currentTab) {
       fetchTabStorage(currentTab.url)
         .then(resp => {
-          // console.log('fetchTabStorage resp => ', resp);
-
           const validateResponse = Array.isArray(resp) ? resp : [];
           setOptions(validateResponse);
         })

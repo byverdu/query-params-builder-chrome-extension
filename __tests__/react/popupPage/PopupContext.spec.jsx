@@ -1,6 +1,6 @@
 import { when } from 'jest-when';
 import React, { useContext } from 'react';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { Popup } from '../../../src/react/pages/popup/Popup.jsx';
 import * as api from '../../../src/extension/utils/api.js';
@@ -132,7 +132,7 @@ describe('PopupContext', () => {
     expect(setOptions).toBeCalledWith([optionsItem]);
   });
 
-  it('should catch the fetchTabStorage errors', done => {
+  it('should catch the fetchTabStorage errors', async () => {
     jest.spyOn(global.console, 'error');
 
     jest
@@ -147,7 +147,7 @@ describe('PopupContext', () => {
       </PopupProvider>
     );
 
-    setTimeout(() => {
+    await waitFor(() => {
       expect(utils.fetchTabStorage).toBeCalledTimes(1);
       expect(utils.fetchTabStorage).toBeCalledWith('someUrl');
       expect(setOptions).toBeCalledTimes(0);
@@ -156,7 +156,6 @@ describe('PopupContext', () => {
         'QueryParamsBuilder extension GET_STORAGE',
         'Error: error fetchTabStorage'
       );
-      done();
-    }, 0);
+    });
   });
 });

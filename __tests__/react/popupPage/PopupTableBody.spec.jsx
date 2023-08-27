@@ -30,7 +30,13 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-describe('OptionsTableBody', () => {
+describe('PopupTableBody', () => {
+  it('should render nothing if no options are available', () => {
+    const container = buildContainer(undefined);
+
+    expect(container.querySelector('table')).not.toBeInTheDocument();
+  });
+
   it("should render a message if there're no options saved", () => {
     const container = buildContainer([]);
 
@@ -68,6 +74,22 @@ describe('OptionsTableBody', () => {
     expect(tableDefinitions).toHaveLength(5);
     expect(optionBundleName.textContent).toEqual('API key');
     expect(tabBundleName.textContent).toEqual('some secret');
+  });
+
+  it('should only delete a bundle if the id matches', () => {
+    const container = buildContainer([option, tab]);
+    const tableRows = container.querySelectorAll('tr');
+    const [, tabsRow] = tableRows;
+    const deleteBtn = tabsRow.querySelector('button');
+
+    delete deleteBtn.dataset.bundleId;
+
+    expect(tableRows).toHaveLength(2);
+
+    fireEvent.click(deleteBtn);
+
+    expect(setOptions).toBeCalledTimes(0);
+    expect(setUpdateAction).toBeCalledTimes(0);
   });
 
   it('should be able to delete the tabs options', () => {
