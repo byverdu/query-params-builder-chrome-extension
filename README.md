@@ -1,4 +1,4 @@
-# QueryParamsBuilder
+# QueryParamsBuilder (needs update from v2)
 
 Do you need to check a website providing different url params for testing purposes? Then, this Chrome Extension might come handy to you.
 
